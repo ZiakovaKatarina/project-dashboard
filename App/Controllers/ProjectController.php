@@ -22,24 +22,38 @@ class ProjectController extends BaseController
 
     public function edit(Request $request): Response
     {
-        $projectId = $request->get('id');
+        $projectId = $request->value('project');
+        if ($projectId <= 0 || !$projectId) {
+            return $this->redirect($this->url('project.index'));
+        }
         $projectInstance = Project::getOne($projectId);
+        if (!$projectInstance) {
+            return $this->redirect($this->url('project.index'));
+        }
         return $this->html(compact('projectInstance'));
     }
 
     public function delete(Request $request): Response
     {
-        $projectId = $request->value('id');
+        $projectId = $request->value('project');
+        if ($projectId <= 0 || !$projectId) {
+            return $this->redirect($this->url('project.index'));
+        }
         $projectInstance = Project::getOne($projectId);
-        $projectInstance->delete();
+        if ($projectInstance) {
+            $projectInstance->delete();
+        }
         return $this->redirect($this->url('project.index'));
     }
 
     public function save(Request $request): Response
     {
-        $projectId = $request->value('id');
+        $projectId = $request->value('project');
         if ($projectId > 0) {
             $projectInstance = Project::getOne($projectId);
+            if (!$projectInstance) {
+                return $this->redirect($this->url('project.index'));
+            }
         } else {
             $projectInstance = new Project();
         }

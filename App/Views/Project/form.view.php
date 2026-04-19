@@ -1,5 +1,5 @@
 <form method="post" action="<?= $link->url('project.save') ?>">
-    <input name="id" type="hidden" value="<?= @$projectInstance?->getId() ?>">
+    <input name="project" type="hidden" value="<?= @$projectInstance?->getId() ?>">
     <label>Názov projektu</label>
     <input name="name" type="text" value="<?= @$projectInstance?->getName() ?>">
     <label>Popis projektu</label>

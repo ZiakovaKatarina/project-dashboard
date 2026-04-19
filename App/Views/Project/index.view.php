@@ -32,8 +32,9 @@
                 </td>
                 <td><?= $project->getDeadline() ?></td>
                 <td><?= $project->getSubmission() ?></td>
-                <td><a href="<?= $link->url('project.edit', ['id' => $project->getId()]) ?>">Upraviť</a></td>
-                <td><a href="<?= $link->url('project.delete', ['id' => $project->getId()]) ?>">Zmazať</a></td>
+                <td><a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a></td>
+                <td><a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a></td>
+                <td><a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Prehliadať úlohy</a></td>
             </tr>
         <?php endforeach ?>
     </table>

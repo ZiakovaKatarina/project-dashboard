@@ -1,5 +1,6 @@
-<form method="post" action="<?= $link->url('task.save') ?>">
-    <input name="id" type="hidden" value="<?= @$taskInstance?->getId() ?>">
+<form method="post" action="<?= $link->url('task.save', ['project' => $projectId]) ?>">
+    <input name="task" type="hidden" value="<?= @$taskInstance?->getId() ?>">
+    <input name="project" type="hidden" value="<?= $projectId ?>">
     <label>Názov úlohy</label>
     <input name="name" type="text" value="<?= @$taskInstance?->getName() ?>">
     <label>Popis úlohy</label>
@@ -18,5 +19,5 @@
     <label>Odovzdanie úlohy</label>
     <input name="submission" type="date" value="<?= @$taskInstance?->getSubmission() ?>">
     <button>Uložiť</button>
-    <a href="?c=task&a=index">Späť</a>
+    <a href="<?= $link->url('task.index', ['project' => $projectId]) ?>">Späť</a>
 </form>

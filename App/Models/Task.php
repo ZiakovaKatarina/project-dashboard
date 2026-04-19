@@ -35,6 +35,11 @@ class Task extends Model
         return $this->project_id;
     }
 
+    public function setProjectId(string $text): void
+    {
+        $this->project_id = $text;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
