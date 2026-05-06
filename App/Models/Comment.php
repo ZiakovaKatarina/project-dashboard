@@ -32,9 +32,19 @@ class Comment extends Model
         return $this->user_id;
     }
 
+    public function setUserId(int $text): void
+    {
+        $this->user_id = $text;
+    }
+
     public function getTaskId(): ?int
     {
         return $this->task_id;
+    }
+
+    public function setTaskId(int $text): void
+    {
+        $this->task_id = $text;
     }
 
     public function getContent(): ?string

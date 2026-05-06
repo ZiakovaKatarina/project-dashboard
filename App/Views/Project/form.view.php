@@ -1,3 +1,10 @@
+<?php
+
+/** @var Framework\Support\LinkGenerator $link */
+/** @var App\Models\Project $projectInstance */
+
+?>
+
 <form method="post" action="<?= $link->url('project.save') ?>">
     <input name="project" type="hidden" value="<?= @$projectInstance?->getId() ?>">
     <label>Názov projektu</label>

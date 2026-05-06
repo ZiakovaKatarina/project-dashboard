@@ -1,4 +1,9 @@
-<?php ?>
+<?php 
+
+/** @var Framework\Support\LinkGenerator $link */
+/** @var App\Models\Project[] $projects */
+
+?>
 
 <h1>Zoznam projektov</h1>
 <?php if (count($projects) == 0): ?>
@@ -36,7 +41,7 @@
                 <td><a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a></td>
                 <td><a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Prehliadať úlohy</a></td>
             </tr>
-        <?php endforeach ?>
+        <?php endforeach; ?>
     </table>
 <?php endif; ?>
 <a href="<?= $link->url('project.add') ?>">Pridať nový projekt</a>

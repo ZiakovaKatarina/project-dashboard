@@ -1,4 +1,10 @@
-<?php ?>
+<?php 
+
+/** @var Framework\Support\LinkGenerator $link */
+/** @var App\Models\Task[] $tasks */
+/** @var int $projectId */
+
+?>
 
 <a href="<?= $link->url('project.index') ?>">Späť</a>
 <h1>Zoznam úloh</h1>
@@ -37,6 +43,7 @@
                 <td><?= $task->getPriority() ?></td>
                 <td><a href="<?= $link->url('task.edit', ['task' => $task->getId(), 'project' => $projectId]) ?>">Upraviť</a></td>
                 <td><a href="<?= $link->url('task.delete', ['task' => $task->getId(), 'project' => $projectId]) ?>">Zmazať</a></td>
+                <td><a href="<?= $link->url('comment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Prehliadať komentáre</a></td>
             </tr>
         <?php endforeach ?>
     </table>

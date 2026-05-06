@@ -1,3 +1,11 @@
+<?php
+
+/** @var Framework\Support\LinkGenerator $link */
+/** @var App\Models\Task $taskInstance */
+/** @var int $projectId */
+
+?>
+
 <form method="post" action="<?= $link->url('task.save', ['project' => $projectId]) ?>">
     <input name="task" type="hidden" value="<?= @$taskInstance?->getId() ?>">
     <input name="project" type="hidden" value="<?= $projectId ?>">
