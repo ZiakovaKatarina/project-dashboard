@@ -43,9 +43,10 @@
                 <td><?= $task->getPriority() ?></td>
                 <td><a href="<?= $link->url('task.edit', ['task' => $task->getId(), 'project' => $projectId]) ?>">Upraviť</a></td>
                 <td><a href="<?= $link->url('task.delete', ['task' => $task->getId(), 'project' => $projectId]) ?>">Zmazať</a></td>
-                <td><a href="<?= $link->url('comment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Prehliadať komentáre</a></td>
+                <td><a href="<?= $link->url('comment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Komentáre</a></td>
+                <td><a href="<?= $link->url('attachment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Prílohy</a></td>
             </tr>
-        <?php endforeach ?>
+        <?php endforeach; ?>
     </table>
 <?php endif; ?>
 <a href="<?= $link->url('task.add', ['project' => $projectId]) ?>">Pridať novú úlohu</a>

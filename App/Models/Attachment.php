@@ -31,6 +31,11 @@ class Attachment extends Model
         return $this->task_id;
     }
 
+    public function setTaskId(string $text): void
+    {
+        $this->task_id = $text;
+    }
+
     public function getPath(): ?string
     {
         return $this->path;
