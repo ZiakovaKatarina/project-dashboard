@@ -16,7 +16,7 @@ $view->setLayout('auth');
                     <div class="text-center text-danger mb-3">
                         <?= @$message ?>
                     </div>
-                    <form class="form-signin" method="post" action="<?= $link->url("login") ?>">
+                    <form class="form-signin" method="post" id="login-form" action="<?= $link->url("login") ?>">
                         <div class="form-label-group mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input name="username" type="text" id="username" class="form-control" placeholder="Username"
@@ -29,12 +29,17 @@ $view->setLayout('auth');
                                    placeholder="Password" required>
                         </div>
                         <div class="text-center">
-                            <button class="btn btn-primary" type="submit" name="submit">Log in
+                            <button class="btn btn-primary" type="submit" id="submit" name="submit">Log in
                             </button>
                         </div>
                     </form>
+                    <div id="errors">
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="js/login.js"></script>

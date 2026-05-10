@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Framework\Core\Model;
+use Framework\Core\IIdentity;
+use Override;
 
-class User extends Model
+class User extends Model implements IIdentity
 {
     protected ?int $user_id = null;
     protected ?string $first_name;
@@ -48,6 +50,12 @@ class User extends Model
         $this->last_name = $text;
     }
 
+    #[Override]
+    public function getName(): string
+    {
+        return $this->first_name . " " . $this->last_name;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -65,7 +73,7 @@ class User extends Model
 
     public function setPassword(string $text): void
     {
-        $this->password = $text;
+        $this->password = password_hash($text, PASSWORD_DEFAULT);
     }
 
     public function getAdmin(): ?bool
