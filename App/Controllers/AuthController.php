@@ -9,6 +9,7 @@ use Framework\Core\BaseController;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 use Framework\Http\Responses\ViewResponse;
+use Override;
 
 /**
  * Class AuthController
@@ -20,6 +21,20 @@ use Framework\Http\Responses\ViewResponse;
  */
 class AuthController extends BaseController
 {
+    #[Override]
+    public function authorize(Request $request, string $action): bool
+    {
+        if ($action == 'index' || $action == 'login' || $action == 'register') {
+            return true;
+        }
+
+        if ($this->app->getAppUser()->isLoggedIn() && $action == 'logout') {
+            return true;
+        }
+
+        return false;
+    }
+    
     /**
      * Redirects to the login page.
      *

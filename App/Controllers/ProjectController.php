@@ -6,9 +6,20 @@ use Framework\Core\BaseController;
 use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 use App\Models\Project;
+use Override;
 
 class ProjectController extends BaseController
 {
+    #[Override]
+    public function authorize(Request $request, string $action): bool
+    {
+        if (!$this->app->getAppUser()->isLoggedIn()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function index(Request $request): Response
     {
         $projects = Project::getAll();

@@ -7,9 +7,20 @@ use Framework\Http\Request;
 use Framework\Http\Responses\Response;
 use App\Models\Task;
 use App\Models\Project;
+use Override;
 
 class TaskController extends BaseController
 {
+    #[Override]
+    public function authorize(Request $request, string $action): bool
+    {
+        if (!$this->app->getAppUser()->isLoggedIn()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function index(Request $request): Response
     {
         $projectId = $request->value('project');

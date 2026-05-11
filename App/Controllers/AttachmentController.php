@@ -9,9 +9,20 @@ use Framework\Http\Responses\Response;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Attachment;
+use Override;
 
 class AttachmentController extends BaseController
 {
+    #[Override]
+    public function authorize(Request $request, string $action): bool
+    {
+        if (!$this->app->getAppUser()->isLoggedIn()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function index(Request $request): Response
     {
         $projectId = $request->value('project');
@@ -34,27 +45,6 @@ class AttachmentController extends BaseController
             return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId]);
         }
     }
-
-    // public function add(Request $request): Response
-    // {
-    //     $projectId = $request->value('project');
-    //     if ($projectId <= 0 || !$projectId) {
-    //         return $this->redirect($this->url('project.index'));
-    //     }
-    //     $projectInstance = Project::getOne($projectId);
-    //     if (!$projectInstance) {
-    //         return $this->redirect($this->url('project.index'));
-    //     }
-    //     $taskId = $request->value('task');
-    //     if ($taskId <= 0 || !$taskId) {
-    //         return $this->redirect($this->url('task.index'));
-    //     }
-    //     $taskInstance = Task::getOne($taskId);
-    //     if (!$taskInstance) {
-    //         return $this->redirect($this->url('task.index'));
-    //     }
-    //     return $this->html(['taskId' => $taskId, 'projectId' => $projectId]);
-    // }
 
     public function delete(Request $request): Response
     {

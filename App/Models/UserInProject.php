@@ -31,9 +31,19 @@ class UserInProject extends Model
         return $this->user_id;
     }
 
+    public function getUser(): ?User
+    {
+        return User::getOne($this->user_id);
+    }
+
     public function getProjectId(): ?int
     {
         return $this->project_id;
+    }
+
+    public function getProject(): ?Project
+    {
+        return Project::getOne($this->project_id);
     }
 
     public function getRights(): ?string

@@ -9,9 +9,20 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\Comment;
 use Framework\Http\HttpException;
+use Override;
 
 class CommentController extends BaseController
 {
+    #[Override]
+    public function authorize(Request $request, string $action): bool
+    {
+        if (!$this->app->getAppUser()->isLoggedIn()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function index(Request $request): Response
     {
         $projectId = $request->value('project');
