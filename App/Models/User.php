@@ -13,7 +13,7 @@ class User extends Model implements IIdentity
     protected ?string $last_name;
     protected ?string $email;
     protected ?string $password;
-    protected ?bool $admin;
+    protected ?int $admin;
 
     protected static function getTableName(): string
     {
@@ -73,7 +73,7 @@ class User extends Model implements IIdentity
 
     public function setPassword(string $text): void
     {
-        $this->password = password_hash($text, PASSWORD_DEFAULT);
+        $this->password = $text;
     }
 
     public function getAdmin(): ?bool
@@ -81,7 +81,7 @@ class User extends Model implements IIdentity
         return $this->admin;
     }
 
-    public function setAdmin(bool $text): void
+    public function setAdmin(int $text): void
     {
         $this->admin = $text;
     }

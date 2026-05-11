@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Configuration;
+use App\Models\User;
 use Exception;
 use Framework\Core\BaseController;
 use Framework\Http\Request;
@@ -50,7 +51,7 @@ class AuthController extends BaseController
         }
 
         $body = $request->json();
-        $username = $body->username;
+        $username = trim($body->username);
         $password = $body->password;
         
         $success = $this->app->getAuthenticator()->login($username, $password);
@@ -59,17 +60,6 @@ class AuthController extends BaseController
         }
 
         return $this->json(['success' => false]);
-
-        // $logged = null;
-        // if ($request->hasValue('submit')) {
-        //     $logged = $this->app->getAuthenticator()->login($request->value('username'), $request->value('password'));
-        //     if ($logged) {
-        //         return $this->redirect($this->url("admin.index"));
-        //     }
-        // }
-
-        // $message = $logged === false ? 'Bad username or password' : null;
-        // return $this->html(compact("message"));
     }
 
     /**
@@ -84,5 +74,41 @@ class AuthController extends BaseController
     {
         $this->app->getAuthenticator()->logout();
         return $this->html();
+    }
+
+    public function register(Request $request): Response
+    {
+        $error = "";
+
+        if ($request->isPost()) {
+            $email = trim($request->value('email'));
+            $users = User::getAll('`email` = ?', [$email]);
+            if ($users) {
+                $error = 'Používateľ už s takýmto emailom existuje.';
+            } else {
+                $first_password = $request->value('password');
+                $second_password = $request->value('repeated_password');
+                if ($first_password !== $second_password) {
+                    $error = 'Heslá sa nezhodujú.';
+                } else {
+                    $hashed_password = password_hash($first_password, PASSWORD_DEFAULT);
+
+                    $first_name = $request->value('first_name');
+                    $last_name = $request->value('last_name');
+
+                    $user = new User();
+                    $user->setAdmin(0);
+                    $user->setPassword($hashed_password);
+                    $user->setFirstName($first_name);
+                    $user->setEmail($email);
+                    $user->setLastName($last_name);
+                    $user->save();
+                    
+                    return $this->redirect($this->url('auth.login'));
+                }   
+            }
+        }
+
+        return $this->html(['error' => $error]);
     }
 }
