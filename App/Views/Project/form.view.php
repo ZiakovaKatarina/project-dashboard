@@ -13,12 +13,12 @@
     <?php endforeach; ?>
 <?php endif; ?>
 
-<form method="post" action="<?= $link->url('project.save') ?>">
+<form method="POST" action="<?= $link->url('project.save') ?>">
     <input name="project" type="hidden" value="<?= @$projectInstance?->getId() ?>">
     <label>Názov projektu</label>
-    <input name="name" type="text" value="<?= @$projectInstance?->getName() ?>">
+    <input name="name" type="text" value="<?= @$projectInstance?->getName() ?>" maxlength="100" minlength="3" required>
     <label>Popis projektu</label>
-    <textarea name="description"><?= @$projectInstance?->getDescription() ?></textarea>
+    <textarea name="description" maxlength="500"><?= @$projectInstance?->getDescription() ?></textarea>
     <label>Status projektu</label>
     <select name="status" value="<?= @$projectInstance?->getStatus() ?>">
         <option value="C" <?= @$projectInstance?->getStatus() === 'C' ? 'selected' : '' ?>>vytvorený</option>
@@ -30,7 +30,7 @@
     <input name="deadline" type="date" value="<?= @$projectInstance?->getDeadline() ?>">
     <label>Odovzdanie projektu</label>
     <input name="submission" type="date" value="<?= @$projectInstance?->getSubmission() ?>">
-    <button>Uložiť</button>
+    <button type="submit">Uložiť</button>
     <a href="?c=project&a=index">Späť</a>
 </form>
 
@@ -72,7 +72,7 @@
 
     <label>Hľadať nového člena projektu podľa emailu</label>
     <form action="<?= $link->url('project.add_member', ['project' => $projectInstance->getId()]) ?>" method="POST">
-        <input type="email" name="email">
+        <input type="email" name="email" required maxlength="250">
         <select name="rights">
             <option value="W">Writer</option>
             <option value="R">Reader</option>

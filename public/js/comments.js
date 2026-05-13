@@ -4,6 +4,17 @@ document.getElementById('show_form_for_new_comment').addEventListener('click', f
 
 async function add_comment(task_id) {
     const content = document.getElementById('new_comment_content').value;
+    
+    if (content.trim().length === 0) {
+        alert("Obsah komentáru nesmie byť prázdny.");
+        return;
+    }
+
+    if (content.trim().length > 500) {
+        alert("Obsah komentáru nemôže byť dlhší ako 500 znakov.");
+        return;
+    }
+
     var response = await fetch('?c=comment&a=add',
         {
             method: "POST",
@@ -54,6 +65,18 @@ function cancel_editing_comment(commentId, content) {
 async function save_edits(commentId) {
     const cell = document.getElementById('edit-content-' + commentId);
     const new_value = cell.value;
+
+    if (new_value.trim().length === 0) {
+        alert("Obsah komentáru nesmie byť prázdny.");
+        return;
+    }
+
+    if (new_value.trim().length > 500) {
+        alert("Obsah komentáru nemôže byť dlhší ako 500 znakov.");
+        return;
+    }
+
+
     var response = await fetch('?c=comment&a=edit',
         {
             method: "POST",

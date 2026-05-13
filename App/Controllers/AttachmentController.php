@@ -99,8 +99,9 @@ class AttachmentController extends BaseController
         if (!$taskInstance) {
             return $this->redirect($this->url('task.index', ['project' => $projectId]));
         }
-        $attachmentInstance = new Attachment();
+
         $file = $request->file('input_new_attachment');
+        $path = Configuration::UPLOAD_DIR;
         
         $errors = array();
         if (!$file) {
@@ -110,6 +111,19 @@ class AttachmentController extends BaseController
         } elseif ($file->getSize() > 2 * 1024 * 1024) {
             $errors[] = "Súbor je príliš veľký. Maximálna možná veľkosť súboru sú 2 MB.";
         }
+        
+        if ($file) {
+            $filename = $file->getName();
+            
+            // lebo DB limit je 50 znakov a to minus time() _
+            if (mb_strlen($filename) > 39) {
+                $errors[] = "Názov súboru je príliš dlhý (max. 39 znakov).";
+            }
+        }
+
+        if (mb_strlen($path) > 100) {
+            $errors[] = "Cesta k súboru je príliš dlhá (max. 100 znakov).";
+        }
 
         if (count($errors) > 0) {
             $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
@@ -117,14 +131,14 @@ class AttachmentController extends BaseController
         }
 
         $filename = time() . "_" . $file->getName();
-        $path = Configuration::UPLOAD_DIR;
-        
-        $file->store($path . $filename);
 
-        $attachmentInstance->setTaskId($taskId);
+        $attachmentInstance = new Attachment();
         $attachmentInstance->setFilename($filename);
         $attachmentInstance->setPath($path);
+        $attachmentInstance->setTaskId($taskId);
         $attachmentInstance->save();
+
+        $file->store($path . $filename);
         
         return $this->redirect($this->url('attachment.index', ['task' => $taskId, 'project' => $projectId]));
     }

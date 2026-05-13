@@ -19,14 +19,14 @@ $view->setLayout('auth');
                     <form class="form-signin" method="post" id="login-form" action="<?= $link->url("login") ?>">
                         <div class="form-label-group mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input name="username" type="text" id="username" class="form-control" placeholder="Username"
-                                   required autofocus>
+                            <input name="username" type="email" id="username" class="form-control" placeholder="Email"
+                                   maxlength="250" required autofocus>
                         </div>
 
                         <div class="form-label-group mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input name="password" type="password" id="password" class="form-control"
-                                   placeholder="Password" required>
+                                   maxlength="250" minlength="5" placeholder="Password" required>
                         </div>
                         <div class="text-center">
                             <button class="btn btn-primary" type="submit" id="submit" name="submit">Log in

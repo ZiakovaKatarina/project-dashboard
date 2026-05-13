@@ -38,7 +38,7 @@
 
 <button id="show_form_for_new_attachment">Pridať novú prílohu</button>
 <form id="form_new_attachment" method="POST" action="<?= $link->url('attachment.save', ['task' => $taskId, 'project' => $projectId]) ?>" enctype="multipart/form-data" style="display:none;">
-    <input type="file" name="input_new_attachment" id="input_new_attachment">
+    <input type="file" name="input_new_attachment" id="input_new_attachment" required>
     <button type="button" onclick="cancel_adding_attachments()">Zrušiť</button>
     <button type="submit">Uložiť</button>
 </form>

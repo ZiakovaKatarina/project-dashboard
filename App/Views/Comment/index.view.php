@@ -38,7 +38,7 @@
 
 <button id="show_form_for_new_comment">Pridať nový komentár</button>
 <form id="form_new_comment" style="display:none;">
-    <textarea id="new_comment_content" placeholder="Napíš komentár..."></textarea>
+    <textarea id="new_comment_content" placeholder="Napíš komentár..." maxlength="500" minlength="1" required></textarea>
     <button type="button" onclick="cancel_adding_comment()">Zrušiť</button>
     <button type="button" id="add_new_comment" onclick="add_comment(<?= $taskId ?>)">Odoslať</button>
 </form>

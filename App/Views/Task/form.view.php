@@ -18,9 +18,9 @@
     <input name="task" type="hidden" value="<?= @$taskInstance?->getId() ?>">
     <input name="project" type="hidden" value="<?= $projectId ?>">
     <label>Názov úlohy</label>
-    <input name="name" type="text" value="<?= @$taskInstance?->getName() ?>">
+    <input name="name" type="text" required maxlength="100" minlength="3" value="<?= @$taskInstance?->getName() ?>">
     <label>Popis úlohy</label>
-    <textarea name="description" type="text"><?= @$taskInstance?->getDescription() ?></textarea>
+    <textarea name="description" required maxlength="500" type="text"><?= @$taskInstance?->getDescription() ?></textarea>
     <label>Status úlohy</label>
     <select name="status">
         <option value="C" <?= @$taskInstance?->getStatus() === 'C' ? 'selected' : '' ?>>vytvorený</option>
@@ -29,7 +29,7 @@
         <option value="R" <?= @$taskInstance?->getStatus() === 'R' ? 'selected' : '' ?>>odstránený</option>
     </select>
     <label>Priorita úlohy</label>
-    <input name="priority" type="number" value="<?= @$taskInstance?->getPriority() ?>" min="0" max="10">
+    <input name="priority" type="number" value="<?= @$taskInstance?->getPriority() ?>" min="1" max="10" required>
     <label>Termín odovzdania</label>
     <input name="deadline" type="date" value="<?= @$taskInstance?->getDeadline() ?>">
     <label>Odovzdanie úlohy</label>
@@ -58,7 +58,7 @@
                         <span id="saved_state_<?= $member->getUser()->getId() ?>"><?= $member->getState() ?></span>
                         <form id="form_change_user_state_<?= $member->getUser()->getId() ?>" method="POST" style="display:none;"
                             action="<?= $link->url('task.edit_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">
-                            <input type="number" min="0" max="100">
+                            <input type="number" name="state" step="0.01" min="0" max="100" required>
                             <button type="button" onclick="cancel_editing_user_in_task(<?= $member->getUser()->getId() ?>">Zrušiť</button>
                             <button type="submit">Uložiť</button>
                         </form>
@@ -72,7 +72,7 @@
 
     <label>Hľadať nového člena tímu podľa emailu</label>
     <form action="<?= $link->url('task.add_member', ['project' => $projectId, 'task' => $taskInstance->getId()]) ?>" method="POST">
-        <input type="email" name="email">
+        <input type="email" name="email" required maxlength="250">
         <button type="submit">Pridať</button>
     </form>
 <?php endif; ?>
