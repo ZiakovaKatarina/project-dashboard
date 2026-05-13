@@ -24,7 +24,7 @@ class AuthController extends BaseController
     #[Override]
     public function authorize(Request $request, string $action): bool
     {
-        if ($action == 'index' || $action == 'login' || $action == 'register') {
+        if ($action == 'index' || $action == 'login' || $action == 'register' || $action == 'profile' || $action == 'update') {
             return true;
         }
 
@@ -93,37 +93,132 @@ class AuthController extends BaseController
 
     public function register(Request $request): Response
     {
-        $error = "";
+        $errors = array();
 
         if ($request->isPost()) {
             $email = trim($request->value('email'));
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Email nie je v správnom tvare.';
+            }
+            if (mb_strlen($email) > 250) {
+                $errors[] = 'Email nemôže byť dlhší ako 250 znakov.';
+            }
+
             $users = User::getAll('`email` = ?', [$email]);
             if ($users) {
-                $error = 'Používateľ už s takýmto emailom existuje.';
-            } else {
-                $first_password = $request->value('password');
+                $errors[] = 'Používateľ už s takýmto emailom existuje.';
+            } 
+            
+            $first_password = $request->value('password');
+            $second_password = $request->value('repeated_password');
+            if ($first_password !== $second_password) {
+                $errors[] = 'Heslá sa nezhodujú.';
+            } elseif (mb_strlen($first_password) < 5 || mb_strlen($first_password) > 250) {
+                $errors[] = 'Heslo nemôže byť kratšie ako 5 znakov a dlhšie ako 250 znakov.';
+            }
+            
+            $first_name = trim($request->value('first_name'));
+            if (empty($first_name)) {
+                $errors[] = 'Meno nemôže byť prázdne.';
+            } elseif (mb_strlen($first_name) > 100 || mb_strlen($first_name) < 3) {
+                $errors[] = 'Dĺžka mena musí byť v rozmedzí od 3 do 100 znakov.';
+            }
+
+            $last_name = trim($request->value('last_name'));
+            if (empty($last_name)) {
+                $errors[] = 'Priezvisko nemôže byť prázdne.';
+            } elseif (mb_strlen($last_name) > 100 || mb_strlen($last_name) < 3) {
+                $errors[] = 'Priezvisko musí byť v rozmedzí od 3 do 100 znakov.';
+            }
+
+            $user = new User();
+            $user->setAdmin(0);
+            $user->setFirstName($first_name);
+            $user->setLastName($last_name);
+            $user->setEmail($email);
+
+            if (count($errors) > 0) {
+                return $this->html(['errors' => $errors, 'register_user' => $user], 'register');
+            }
+
+            $hashed_password = password_hash($first_password, PASSWORD_DEFAULT);
+            $user->setPassword($hashed_password);
+            $user->save();
+                    
+            return $this->redirect($this->url('auth.login'));
+        }   
+
+        return $this->html(['errors' => $errors]);
+    }
+
+    public function profile(Request $request): Response
+    {
+        $user = User::getOne($this->user->getId());
+        return $this->html(['register_user' => $user], 'profile');
+    }
+
+    public function update(Request $request): Response
+    {
+        $errors = array();
+
+        if ($request->isPost()) {
+            $user = User::getOne($this->user->getId());
+            
+            $first_password = $request->value('password');
+            if (!empty($first_password)) {
                 $second_password = $request->value('repeated_password');
                 if ($first_password !== $second_password) {
-                    $error = 'Heslá sa nezhodujú.';
-                } else {
-                    $hashed_password = password_hash($first_password, PASSWORD_DEFAULT);
+                    $errors[] = 'Heslá sa nezhodujú.';
+                } elseif (mb_strlen($first_password) < 5 || mb_strlen($first_password) > 250) {
+                    $errors[] = 'Heslo nemôže byť kratšie ako 5 znakov a dlhšie ako 250 znakov.';
+                }
 
-                    $first_name = $request->value('first_name');
-                    $last_name = $request->value('last_name');
-
-                    $user = new User();
-                    $user->setAdmin(0);
-                    $user->setPassword($hashed_password);
-                    $user->setFirstName($first_name);
-                    $user->setEmail($email);
-                    $user->setLastName($last_name);
-                    $user->save();
-                    
-                    return $this->redirect($this->url('auth.login'));
-                }   
+                $hashed_password = password_hash($first_password, PASSWORD_DEFAULT);
+                $user->setPassword($hashed_password);
             }
-        }
 
-        return $this->html(['error' => $error]);
+            $email = $request->value('email');
+            if (strcmp($email, $user->getEmail()) != 0) {
+                $users = User::getAll('`email` = ?', [$email]);
+                if ($users) {
+                    $errors[] = 'Používateľ už s takýmto emailom existuje.';
+                }
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = 'Email nie je v správnom tvare.';
+                }
+                if (mb_strlen($email) > 250) {
+                    $errors[] = 'Email nemôže byť dlhší ako 250 znakov.';
+                }
+            }
+            
+            
+            $first_name = trim($request->value('first_name'));
+            if (empty($first_name)) {
+                $errors[] = 'Meno nemôže byť prázdne.';
+            } elseif (mb_strlen($first_name) > 100 || mb_strlen($first_name) < 3) {
+                $errors[] = 'Dĺžka mena musí byť v rozmedzí od 3 do 100 znakov.';
+            }
+
+            $last_name = trim($request->value('last_name'));
+            if (empty($last_name)) {
+                $errors[] = 'Priezvisko nemôže byť prázdne.';
+            } elseif (mb_strlen($last_name) > 100 || mb_strlen($last_name) < 3) {
+                $errors[] = 'Priezvisko musí byť v rozmedzí od 3 do 100 znakov.';
+            }
+
+            $user->setFirstName($first_name);
+            $user->setLastName($last_name);
+            $user->setEmail($email);
+
+            if (count($errors) > 0) {
+                return $this->html(['errors' => $errors, 'register_user' => $user], 'profile');
+            }
+
+            $user->save();
+                    
+            return $this->redirect($this->url('auth.profile'));
+        }   
+
+        return $this->html(['errors' => $errors]);
     }
 }

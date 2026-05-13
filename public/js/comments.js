@@ -19,7 +19,9 @@ async function add_comment(task_id) {
         }
     );
     var data = await response.json();
-    if (data) {
+    if (data.error) {
+        alert(data.error);
+    } else if (data) {
         var new_content = `<tr id="comment-row-${data.comment_id}">`;
         new_content += `<td>${data.comment_id}</td>`;
         new_content += `<td>${data.user_id || ''}</td>`;
@@ -67,7 +69,9 @@ async function save_edits(commentId) {
         }
     );
     var data = await response.json();
-    if (data) {
+    if (data.error) {
+        alert(data.error);
+    } else if (data) {
         document.getElementById("comment-content-" + commentId).innerText = data.content;
     }
 }

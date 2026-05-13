@@ -6,13 +6,13 @@
 
 ?>
 
-<?php if (count($errors) > 0): ?>
+<?php if (!empty($errors)): ?>
     <?php foreach ($errors as $error): ?>
         <p><?= $error ?></p>
     <?php endforeach; ?>
 <?php endif; ?>
 
-<form name="register-form" method="POST" action="<?= $link->url('auth.register') ?>">
+<form name="register-form" method="POST" action="<?= $link->url('auth.update') ?>">
     <label>First name</label>
     <input type="text" name="first_name" value="<?= @$register_user?->getFirstName() ?>" required>
     <label>Last name</label>
@@ -20,8 +20,8 @@
     <label>Email</label>
     <input type="email" name="email" value="<?= @$register_user?->getEmail() ?>" required>
     <label>Password</label>
-    <input type="password" name="password" required>
+    <input type="password" name="password">
     <label>Repeat password</label>
-    <input type="password" name="repeated_password" required>
-    <button type="submit">Register</button>
+    <input type="password" name="repeated_password">
+    <button type="submit">Aktualizovať profil</button>
 </form>

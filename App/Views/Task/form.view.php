@@ -3,8 +3,16 @@
 /** @var Framework\Support\LinkGenerator $link */
 /** @var App\Models\Task $taskInstance */
 /** @var int $projectId */
+/** @var App\Models\UserInTask[] $members */
+/** @var string[] $errors */
 
 ?>
+
+<?php if (!empty($errors)): ?>
+    <?php foreach ($errors as $error): ?>
+        <p><?= $error ?></p>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <form method="post" action="<?= $link->url('task.save', ['project' => $projectId]) ?>">
     <input name="task" type="hidden" value="<?= @$taskInstance?->getId() ?>">
@@ -21,7 +29,7 @@
         <option value="R" <?= @$taskInstance?->getStatus() === 'R' ? 'selected' : '' ?>>odstránený</option>
     </select>
     <label>Priorita úlohy</label>
-    <input name="priority" type="number" value="<?= @$taskInstance?->getPriority() ?>" min="0" max="5">
+    <input name="priority" type="number" value="<?= @$taskInstance?->getPriority() ?>" min="0" max="10">
     <label>Termín odovzdania</label>
     <input name="deadline" type="date" value="<?= @$taskInstance?->getDeadline() ?>">
     <label>Odovzdanie úlohy</label>
@@ -29,3 +37,44 @@
     <button>Uložiť</button>
     <a href="<?= $link->url('task.index', ['project' => $projectId]) ?>">Späť</a>
 </form>
+
+<?php if (@$taskInstance?->getId() > 0): ?>
+    <h2>Osoby pracujúce na tejto úlohe</h2>
+    <?php if (count($members) === 0): ?>
+        <p>Tejto úlohe ešte neboli priradení žiadni používatelia.</p>
+    <?php else: ?>
+        <table>
+            <tr>
+                <th>Meno</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Akcie</th>
+            </tr>
+            <?php foreach ($members as $member): ?>
+                <tr>
+                    <td><?= $member->getUser()->getName() ?></td>
+                    <td><?= $member->getUser()->getEmail() ?></td>
+                    <td>
+                        <span id="saved_state_<?= $member->getUser()->getId() ?>"><?= $member->getState() ?></span>
+                        <form id="form_change_user_state_<?= $member->getUser()->getId() ?>" method="POST" style="display:none;"
+                            action="<?= $link->url('task.edit_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">
+                            <input type="number" min="0" max="100">
+                            <button type="button" onclick="cancel_editing_user_in_task(<?= $member->getUser()->getId() ?>">Zrušiť</button>
+                            <button type="submit">Uložiť</button>
+                        </form>
+                    </td>
+                    <td><button onclick="edit_user_in_task(<?= $member->getUser()->getId() ?>)">Upraviť</button></td>
+                    <td><a href="<?= $link->url('task.remove_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">Odstrániť</a></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+
+    <label>Hľadať nového člena tímu podľa emailu</label>
+    <form action="<?= $link->url('task.add_member', ['project' => $projectId, 'task' => $taskInstance->getId()]) ?>" method="POST">
+        <input type="email" name="email">
+        <button type="submit">Pridať</button>
+    </form>
+<?php endif; ?>
+
+<script src="js/task_form.js"></script>

@@ -36,6 +36,11 @@ class UserInTask extends Model
         return User::getOne($this->user_id);
     }
 
+    public function setUserId(int $text): void
+    {
+        $this->user_id = $text;
+    }
+
     public function getTaskId(): ?int
     {
         return $this->task_id;
@@ -44,6 +49,11 @@ class UserInTask extends Model
     public function getTask(): ?Task
     {
         return Task::getOne($this->task_id);
+    }
+
+    public function setTaskId(int $text): void
+    {
+        $this->task_id = $text;
     }
 
     public function getState(): ?float

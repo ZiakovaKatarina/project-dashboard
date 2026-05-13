@@ -4,8 +4,15 @@
 /** @var App\Models\Attachment[] $attachments */
 /** @var int $taskId */
 /** @var int $projectId */
+/** @var string[] $errors */
 
 ?>
+
+<?php if (count($errors) > 0): ?>
+    <?php foreach ($errors as $error): ?>
+        <p><?= $error ?></p>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <a href="<?= $link->url('task.index', ['project' => $projectId]) ?>">Späť</a>
 <h1>Zoznam príloh</h1>
@@ -22,7 +29,6 @@
             <tr>
                 <td><?= $attachment->getId() ?></td>
                 <td><?= $attachment->getFilename() ?></td>
-                <!-- TODO overit ci toto bude fungovat -->
                 <td><a href="<?= $link->asset($attachment->getPath() . $attachment->getFilename()) ?>" download>Stiahnuť</a></td>
                 <td><a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a></td>
             </tr>

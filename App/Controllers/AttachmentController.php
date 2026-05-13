@@ -40,10 +40,13 @@ class AttachmentController extends BaseController
         $taskInstance = Task::getOne($taskId);
         if (!$taskInstance) {
             return $this->redirect($this->url('task.index'));
-        } else {
-            $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
-            return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId]);
         }
+        if ($taskInstance->getProjectId() != $projectId) {
+            return $this->redirect($this->url('project.index'));
+        }
+        
+        $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
+        return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId]);
     }
 
     public function delete(Request $request): Response
@@ -98,17 +101,30 @@ class AttachmentController extends BaseController
         }
         $attachmentInstance = new Attachment();
         $file = $request->file('input_new_attachment');
-        if ($file && $file->isOk()) {
-            $filename = time() . "_" . $file->getName();
-            $path = Configuration::UPLOAD_DIR;
-            
-            $file->store($path . $filename);
-
-            $attachmentInstance->setTaskId($taskId);
-            $attachmentInstance->setFilename($filename);
-            $attachmentInstance->setPath($path);
-            $attachmentInstance->save();
+        
+        $errors = array();
+        if (!$file) {
+            $errors[] = "Nebol vybraný žiadny súbor.";
+        } elseif (!$file->isOk()) {
+            $errors[] = "Nastala chyba pri nahrávaní súboru.";
+        } elseif ($file->getSize() > 2 * 1024 * 1024) {
+            $errors[] = "Súbor je príliš veľký. Maximálna možná veľkosť súboru sú 2 MB.";
         }
+
+        if (count($errors) > 0) {
+            $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
+            return $this->html(['errors' => $errors, 'projectId' => $projectId, 'taskId' => $taskId, 'attachments' => $attachments], 'index');
+        }
+
+        $filename = time() . "_" . $file->getName();
+        $path = Configuration::UPLOAD_DIR;
+        
+        $file->store($path . $filename);
+
+        $attachmentInstance->setTaskId($taskId);
+        $attachmentInstance->setFilename($filename);
+        $attachmentInstance->setPath($path);
+        $attachmentInstance->save();
         
         return $this->redirect($this->url('attachment.index', ['task' => $taskId, 'project' => $projectId]));
     }

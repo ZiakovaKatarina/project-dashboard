@@ -63,7 +63,7 @@ class Project extends Model
         return $this->deadline;
     }
 
-    public function setDeadline(string $text): void
+    public function setDeadline(?string $text): void
     {
         $this->deadline = $text;
     }
@@ -73,7 +73,7 @@ class Project extends Model
         return $this->submission;
     }
 
-    public function setSubmission(string $text): void
+    public function setSubmission(?string $text): void
     {
         $this->submission = $text;
     }

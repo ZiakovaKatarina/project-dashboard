@@ -9,7 +9,7 @@ class UserInProject extends Model
     protected ?int $user_in_project_id = null;
     protected ?int $user_id;
     protected ?int $project_id;
-    protected ?float $rights;
+    protected ?string $rights;
 
     protected static function getTableName(): string
     {
@@ -36,6 +36,11 @@ class UserInProject extends Model
         return User::getOne($this->user_id);
     }
 
+    public function setUserId(int $text): void
+    {
+        $this->user_id = $text;
+    }
+
     public function getProjectId(): ?int
     {
         return $this->project_id;
@@ -44,6 +49,11 @@ class UserInProject extends Model
     public function getProject(): ?Project
     {
         return Project::getOne($this->project_id);
+    }
+
+    public function setProjectId(int $text): void
+    {
+        $this->project_id = $text;
     }
 
     public function getRights(): ?string
