@@ -25,8 +25,8 @@
         <?php foreach ($tasks as $task): ?>
             <tr>
                 <td><?= $task->getId() ?></td>
-                <td><?= $task->getName() ?></td>
-                <td><?= $task->getDescription() ?></td>
+                <td><?= htmlspecialchars($task->getName() ?? '') ?></td>
+                <td><?= htmlspecialchars($task->getDescription() ?? '') ?></td>
                 <td>
                     <?php if ($task->getStatus() === 'C'): ?>
                         vytvorený
