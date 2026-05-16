@@ -9,6 +9,8 @@ use Framework\Http\Responses\Response;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Attachment;
+use App\Models\UserInProject;
+use App\Models\UserInTask;
 use Override;
 
 class AttachmentController extends BaseController
@@ -17,6 +19,34 @@ class AttachmentController extends BaseController
     public function authorize(Request $request, string $action): bool
     {
         if (!$this->app->getAppUser()->isLoggedIn()) {
+            return false;
+        }
+
+        $projectId = $request->value('project');
+        $taskId = $request->value('task');
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        if (empty($membership_in_project)) {
+            return false;
+        }
+        
+        if ($action == 'index') {
+            return true;
+        }
+
+        $membership_in_project = $membership_in_project[0];
+        $role = $membership_in_project->getRights();
+        
+        if ($role == 'A') {
+            return true;
+        }
+
+        if ($role == 'R') {
+            return false;
+        }
+
+        $membership_in_task = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
+        if (empty($membership_in_task)) {
             return false;
         }
 
@@ -46,7 +76,7 @@ class AttachmentController extends BaseController
         }
         
         $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
-        return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId]);
+        return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId, 'errors' => []]);
     }
 
     public function delete(Request $request): Response

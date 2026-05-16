@@ -21,7 +21,30 @@ class TaskController extends BaseController
             return false;
         }
 
-        return true;
+        $projectId = $request->value('project');
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        if (empty($membership_in_project)) {
+            return false;
+        }
+
+        if ($action == 'index') {
+            return true;
+        }
+
+        $membership_in_project = $membership_in_project[0];
+        $role = $membership_in_project->getRights();
+        if ($role == 'A') {
+            return true;
+        }
+
+        if ($role == 'W') {
+            if ($action == 'edit' || $action == 'save' || $action == 'add') {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function index(Request $request): Response

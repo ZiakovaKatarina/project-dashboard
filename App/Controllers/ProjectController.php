@@ -19,7 +19,29 @@ class ProjectController extends BaseController
             return false;
         }
 
-        return true;
+        if ($action == 'index' || $action == 'add') {
+            return true;
+        }
+
+        $projectId = $request->value('project');
+        if ($projectId <= 0 && $action == 'save') {
+            return true;
+        }
+
+
+        $userId = $this->app->getAppUser()->getId();
+        $membership = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        if (empty($membership)) {
+            return false;
+        }
+
+        $membership = $membership[0];
+        $role = $membership->getRights();
+        if ($role == 'A') {
+            return true;
+        }
+
+        return false;
     }
 
     public function index(Request $request): Response

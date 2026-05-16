@@ -24,14 +24,15 @@ class AuthController extends BaseController
     #[Override]
     public function authorize(Request $request, string $action): bool
     {
-        if ($action == 'index' || $action == 'login' || $action == 'register' || $action == 'profile' || $action == 'update') {
-            return true;
+        if ($this->app->getAppUser()->isLoggedIn()) {
+            if ($action == 'profile' || $action == 'logout' || $action == 'update') {
+                return true;
+            }
+        } else {
+            if ($action == 'index' || $action == 'login' || $action == 'register') {
+                return true;
+            }
         }
-
-        if ($this->app->getAppUser()->isLoggedIn() && $action == 'logout') {
-            return true;
-        }
-
         return false;
     }
     
