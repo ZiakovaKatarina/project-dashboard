@@ -14,11 +14,11 @@
 
 <form name="register-form" method="POST" action="<?= $link->url('auth.update') ?>">
     <label>First name</label>
-    <input type="text" name="first_name" maxlength="100" minlength="3" value="<?= @$register_user?->getFirstName() ?>" required>
+    <input type="text" name="first_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getFirstName() ?? '') ?>" required>
     <label>Last name</label>
-    <input type="text" name="last_name" maxlength="100" minlength="3" value="<?= @$register_user?->getLastName() ?>" required>
+    <input type="text" name="last_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getLastName() ?? '') ?>" required>
     <label>Email</label>
-    <input type="email" name="email" maxlength="250" value="<?= @$register_user?->getEmail() ?>" required>
+    <input type="email" name="email" maxlength="250" value="<?= htmlspecialchars(@$register_user?->getEmail() ?? '') ?>" required>
     <label>Password</label>
     <input type="password" maxlength="250" minlength="5" name="password">
     <label>Repeat password</label>

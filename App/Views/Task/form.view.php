@@ -18,9 +18,9 @@
     <input name="task" type="hidden" value="<?= @$taskInstance?->getId() ?>">
     <input name="project" type="hidden" value="<?= $projectId ?>">
     <label>Názov úlohy</label>
-    <input name="name" type="text" required maxlength="100" minlength="3" value="<?= @$taskInstance?->getName() ?>">
+    <input name="name" type="text" required maxlength="100" minlength="3" value="<?= htmlspecialchars(@$taskInstance?->getName() ?? '') ?>">
     <label>Popis úlohy</label>
-    <textarea name="description" required maxlength="500" type="text"><?= @$taskInstance?->getDescription() ?></textarea>
+    <textarea name="description" required maxlength="500" type="text"><?= htmlspecialchars(@$taskInstance?->getDescription() ?? '') ?></textarea>
     <label>Status úlohy</label>
     <select name="status">
         <option value="C" <?= @$taskInstance?->getStatus() === 'C' ? 'selected' : '' ?>>vytvorený</option>
@@ -52,8 +52,8 @@
             </tr>
             <?php foreach ($members as $member): ?>
                 <tr>
-                    <td><?= $member->getUser()->getName() ?></td>
-                    <td><?= $member->getUser()->getEmail() ?></td>
+                    <td><?= htmlspecialchars($member->getUser()->getName() ?? '') ?></td>
+                    <td><?= htmlspecialchars($member->getUser()->getEmail() ?? '') ?></td>
                     <td>
                         <span id="saved_state_<?= $member->getUser()->getId() ?>"><?= $member->getState() ?></span>
                         <form id="form_change_user_state_<?= $member->getUser()->getId() ?>" method="POST" style="display:none;"

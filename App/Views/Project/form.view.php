@@ -16,9 +16,9 @@
 <form method="POST" action="<?= $link->url('project.save') ?>">
     <input name="project" type="hidden" value="<?= @$projectInstance?->getId() ?>">
     <label>Názov projektu</label>
-    <input name="name" type="text" value="<?= @$projectInstance?->getName() ?>" maxlength="100" minlength="3" required>
+    <input name="name" type="text" value="<?= htmlspecialchars(@$projectInstance?->getName() ?? '') ?>" maxlength="100" minlength="3" required>
     <label>Popis projektu</label>
-    <textarea name="description" maxlength="500"><?= @$projectInstance?->getDescription() ?></textarea>
+    <textarea name="description" maxlength="500"><?= htmlspecialchars(@$projectInstance?->getDescription() ?? '') ?></textarea>
     <label>Status projektu</label>
     <select name="status" value="<?= @$projectInstance?->getStatus() ?>">
         <option value="C" <?= @$projectInstance?->getStatus() === 'C' ? 'selected' : '' ?>>vytvorený</option>
@@ -48,10 +48,10 @@
             </tr>
             <?php foreach ($members as $member): ?>
                 <tr>
-                    <td><?= $member->getUser()->getFirstName() . " " . $member->getUser()->getLastName() ?></td>
-                    <td><?= $member->getUser()->getEmail() ?></td>
+                    <td><?= htmlspecialchars($member->getUser()->getFirstName() ?? '') . " " . htmlspecialchars($member->getUser()->getLastName() ?? '') ?></td>
+                    <td><?= htmlspecialchars($member->getUser()->getEmail() ?? '') ?></td>
                     <td>
-                        <span id="saved_right_<?= $member->getUser()->getId() ?>"><?= $member->getRights() ?></span>
+                        <span id="saved_right_<?= $member->getUser()->getId() ?>"><?= htmlspecialchars($member->getRights() ?? '') ?></span>
                         <form id="form_change_user_rights_<?= $member->getUser()->getId() ?>" method="POST" style="display:none;"
                               action="<?= $link->url('project.edit_user', ['project' => $projectInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">
                             <select name="rights">

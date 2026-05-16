@@ -26,7 +26,7 @@
                     <td><?= $comment->getId() ?></td>
                     <td><?= $comment->getUserId() ?></td>
                     <td><?= $comment->getTaskId() ?></td>
-                    <td id="comment-content-<?= $comment->getId() ?>"><?= $comment->getContent() ?></td>
+                    <td id="comment-content-<?= $comment->getId() ?>"><?= htmlspecialchars($comment->getContent() ?? '') ?></td>
                     <td><?= $comment->getCreation() ?></td>
                     <td id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>)">Upraviť</button></td>
                     <td><button onclick="delete_comment(<?= $comment->getId() ?>)">Zmazať</button></td>

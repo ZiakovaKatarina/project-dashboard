@@ -37,29 +37,32 @@ async function add_comment(task_id) {
         new_content += `<td>${data.comment_id}</td>`;
         new_content += `<td>${data.user_id || ''}</td>`;
         new_content += `<td>${data.task_id}</td>`;
-        new_content += `<td id="comment-content-${data.comment_id}">${data.content}</td>`;
+        new_content += `<td id="comment-content-${data.comment_id}"></td>`;
         new_content += `<td>${data.creation}</td>`;
         new_content += `<td><button onclick="edit_comment(${data.comment_id})">Upraviť</button></td>`;
         new_content += `<td><button onclick="delete_comment(${data.comment_id})">Zmazať</button></td>`;
         new_content += `</tr>`;
         document.getElementById('comments-list').innerHTML += new_content;
+        document.getElementById('comment-content-' + data.comment_id).textContent = data.content;
         cancel_adding_comment();
     }
 }
 
 function edit_comment(commentId) {
     const cell = document.getElementById('comment-content-' + commentId);
-    const old_value = cell.innerText;
+    const old_value = cell.textContent;
+    cell.dataset.old_value = old_value;
     cell.innerHTML = `
-        <textarea id="edit-content-${commentId}">${old_value}</textarea>
+        <textarea id="edit-content-${commentId}"></textarea>
         <button onclick="save_edits(${commentId})">Uložiť</button>
-        <button onclick="cancel_editing_comment(${commentId}, '${old_value}')">Zrušiť</button>
+        <button onclick="cancel_editing_comment(${commentId})">Zrušiť</button>
     `;
+    document.getElementById("edit-content-" + commentId).value = old_value;
 }
 
-function cancel_editing_comment(commentId, content) {
+function cancel_editing_comment(commentId) {
     const cell = document.getElementById('comment-content-' + commentId);
-    cell.innerText = content;
+    cell.textContent = cell.dataset.old_value;
 }
 
 async function save_edits(commentId) {
@@ -95,7 +98,7 @@ async function save_edits(commentId) {
     if (data.error) {
         alert(data.error);
     } else if (data) {
-        document.getElementById("comment-content-" + commentId).innerText = data.content;
+        document.getElementById("comment-content-" + commentId).textContent = data.content;
     }
 }
 

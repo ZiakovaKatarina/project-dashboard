@@ -28,8 +28,8 @@
         <?php foreach ($attachments as $attachment): ?>
             <tr>
                 <td><?= $attachment->getId() ?></td>
-                <td><?= $attachment->getFilename() ?></td>
-                <td><a href="<?= $link->asset($attachment->getPath() . $attachment->getFilename()) ?>" download>Stiahnuť</a></td>
+                <td><?= htmlspecialchars($attachment->getFilename()) ?></td>
+                <td><a href="<?= $link->asset($attachment->getPath() . htmlspecialchars($attachment->getFilename())) ?>" download>Stiahnuť</a></td>
                 <td><a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a></td>
             </tr>
         <?php endforeach; ?>

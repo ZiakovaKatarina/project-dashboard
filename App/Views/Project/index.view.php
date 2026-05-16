@@ -22,8 +22,8 @@
         <?php foreach ($projects as $project): ?>
             <tr>
                 <td><?= $project->getId() ?></td>
-                <td><?= $project->getName() ?></td>
-                <td><?= $project->getDescription() ?></td>
+                <td><?= htmlspecialchars($project->getName() ?? '') ?></td>
+                <td><?= htmlspecialchars($project->getDescription() ?? '') ?></td>
                 <td>
                     <?php if ($project->getStatus() === 'C'): ?>
                         vytvorený
