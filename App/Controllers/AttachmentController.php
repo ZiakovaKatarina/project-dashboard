@@ -86,7 +86,7 @@ class AttachmentController extends BaseController
             if (empty($membership_in_task) && $role !== 'A') {
                 $role = null;
             }
-            if ($role === 'W') {
+            if ($role === 'R') {
                 $role = null;
             }
         }
@@ -171,7 +171,21 @@ class AttachmentController extends BaseController
 
         if (count($errors) > 0) {
             $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
-            return $this->html(['errors' => $errors, 'projectId' => $projectId, 'taskId' => $taskId, 'attachments' => $attachments], 'index');
+            $userId = $this->app->getAppUser()->getId();
+            $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+            $membership_in_task = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
+            if (empty($membership_in_project)) {
+                $role = null;
+            } else {
+                $role = ($membership_in_project[0])->getRights();
+                if (empty($membership_in_task) && $role !== 'A') {
+                    $role = null;
+                }
+                if ($role === 'R') {
+                    $role = null;
+                }
+            }
+            return $this->html(['errors' => $errors, 'projectId' => $projectId, 'taskId' => $taskId, 'attachments' => $attachments, 'role' => $role], 'index');
         }
 
         $filename = time() . "_" . $file->getName();

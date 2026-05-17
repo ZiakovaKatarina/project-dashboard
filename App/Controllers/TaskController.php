@@ -201,11 +201,18 @@ class TaskController extends BaseController
         }
 
         if (count($errors) > 0) {
+            $userId = $this->app->getAppUser()->getId();
+            $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+            if (empty($membership_in_project)) {
+                $role = null;
+            } else {
+                $role = ($membership_in_project[0])->getRights();
+            }
             if ($taskId) {
                 $usersInTaskInstance = UserInTask::getAll('`task_id` = ?', [$taskId]);
-                return $this->html(['errors' => $errors, 'taskInstance' => $taskInstance, 'projectId' => $projectId, 'members' => $usersInTaskInstance], 'edit');
+                return $this->html(['errors' => $errors, 'role' => $role, 'taskInstance' => $taskInstance, 'projectId' => $projectId, 'members' => $usersInTaskInstance], 'edit');
             } else {
-                return $this->html(['errors' => $errors, 'taskInstance' => $taskInstance, 'projectId' => $projectId], 'add');
+                return $this->html(['errors' => $errors, 'role' => $role, 'taskInstance' => $taskInstance, 'projectId' => $projectId], 'add');
             }
         }
 
@@ -276,7 +283,14 @@ class TaskController extends BaseController
             
             if (count($errors) > 0) {
                 $members = UserInTask::getAll('`task_id` = ?', [$taskId]);
-                return $this->html(['errors' => $errors, 'taskInstance' => $taskInstance, 'members' => $members, 'projectId' => $projectId], 'edit');
+                $userId = $this->app->getAppUser()->getId();
+                $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+                if (empty($membership_in_project)) {
+                    $role = null;
+                } else {
+                    $role = ($membership_in_project[0])->getRights();
+                }
+                return $this->html(['errors' => $errors, 'role' => $role, 'taskInstance' => $taskInstance, 'members' => $members, 'projectId' => $projectId], 'edit');
             }
 
             $new_user_in_task = new UserInTask();
@@ -340,7 +354,14 @@ class TaskController extends BaseController
             
             if (count($errors) > 0) {
                 $members = UserInTask::getAll('`task_id` = ?', [$taskId]);
-                return $this->html(['errors' => $errors, 'taskInstance' => $taskInstance, 'members' => $members, 'projectId' => $projectId], 'edit');
+                $userId = $this->app->getAppUser()->getId();
+                $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+                if (empty($membership_in_project)) {
+                    $role = null;
+                } else {
+                    $role = ($membership_in_project[0])->getRights();
+                }
+                return $this->html(['errors' => $errors, 'role' => $role, 'taskInstance' => $taskInstance, 'members' => $members, 'projectId' => $projectId], 'edit');
             }
 
             $searched_user_in_task->setState($state);
