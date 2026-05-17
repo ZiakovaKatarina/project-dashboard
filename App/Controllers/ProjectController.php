@@ -46,8 +46,15 @@ class ProjectController extends BaseController
 
     public function index(Request $request): Response
     {
-        $projects = Project::getAll();
-        return $this->html(['projects' => $projects]);
+        $userId = $this->app->getAppUser()->getId();
+        $userINprojects = UserInProject::getAll('`user_id` = ?', [$userId]);
+        $projects = array();
+        $roles = array();
+        for ($x = 0; $x < count($userINprojects); $x++) {
+            $projects[] = Project::getOne($userINprojects[$x]->getProjectId());
+            $roles[] = $userINprojects[$x]->getRights();
+        }
+        return $this->html(['projects' => $projects, 'roles' => $roles]);
     }
 
     public function add(Request $request): Response

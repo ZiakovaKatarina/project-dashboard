@@ -2,6 +2,7 @@
 
 /** @var Framework\Support\LinkGenerator $link */
 /** @var App\Models\Project[] $projects */
+/** @var string[] $roles */
 
 ?>
 
@@ -19,7 +20,9 @@
             <th>Odovzdanie</th>
             <th>Akcie</th>
         </tr>
-        <?php foreach ($projects as $project): ?>
+        <?php for ($x = 0; $x < count($projects); $x++): ?>
+            <?php $project = $projects[$x]; ?>
+            <?php $role = $roles[$x]; ?>
             <tr>
                 <td><?= $project->getId() ?></td>
                 <td><?= htmlspecialchars($project->getName() ?? '') ?></td>
@@ -37,11 +40,13 @@
                 </td>
                 <td><?= $project->getDeadline() ?></td>
                 <td><?= $project->getSubmission() ?></td>
-                <td><a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a></td>
-                <td><a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a></td>
-                <td><a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Prehliadať úlohy</a></td>
+                <?php if ($role == 'A'): ?>
+                    <td><a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a></td>
+                    <td><a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a></td>
+                <?php endif; ?>
+                <td><a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Úlohy</a></td>
             </tr>
-        <?php endforeach; ?>
+        <?php endfor; ?>
     </table>
 <?php endif; ?>
 <a href="<?= $link->url('project.add') ?>">Pridať nový projekt</a>

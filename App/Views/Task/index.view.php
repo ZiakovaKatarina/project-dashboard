@@ -3,6 +3,7 @@
 /** @var Framework\Support\LinkGenerator $link */
 /** @var App\Models\Task[] $tasks */
 /** @var int $projectId */
+/** @var string $role */
 
 ?>
 
@@ -41,12 +42,18 @@
                 <td><?= $task->getDeadline() ?></td>
                 <td><?= $task->getSubmission() ?></td>
                 <td><?= $task->getPriority() ?></td>
-                <td><a href="<?= $link->url('task.edit', ['task' => $task->getId(), 'project' => $projectId]) ?>">Upraviť</a></td>
-                <td><a href="<?= $link->url('task.delete', ['task' => $task->getId(), 'project' => $projectId]) ?>">Zmazať</a></td>
+                <?php if ($role === 'A' || $role === 'W'): ?>
+                    <td><a href="<?= $link->url('task.edit', ['task' => $task->getId(), 'project' => $projectId]) ?>">Upraviť</a></td>
+                <?php endif; ?>
+                <?php if ($role === 'A'): ?>
+                    <td><a href="<?= $link->url('task.delete', ['task' => $task->getId(), 'project' => $projectId]) ?>">Zmazať</a></td>
+                <?php endif; ?>
                 <td><a href="<?= $link->url('comment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Komentáre</a></td>
                 <td><a href="<?= $link->url('attachment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Prílohy</a></td>
             </tr>
         <?php endforeach; ?>
     </table>
 <?php endif; ?>
-<a href="<?= $link->url('task.add', ['project' => $projectId]) ?>">Pridať novú úlohu</a>
+<?php if ($role === 'A' || $role === 'W'): ?>
+    <a href="<?= $link->url('task.add', ['project' => $projectId]) ?>">Pridať novú úlohu</a>
+<?php endif; ?>

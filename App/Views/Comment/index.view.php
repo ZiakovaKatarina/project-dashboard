@@ -4,6 +4,7 @@
 /** @var App\Models\Comment[] $comments */
 /** @var int $projectId */
 /** @var int $taskId */
+/** @var string $role */
 
 ?>
 
@@ -19,6 +20,9 @@
             <th>ID úlohy</th>
             <th>Obsah</th>
             <th>Dátum a čas vytvorenia</th>
+            <?php if ($role): ?>
+                <th>Akcie</th>
+            <?php endif; ?>
         </tr>
         <tbody id='comments-list'>
             <?php foreach ($comments as $comment): ?>
@@ -28,19 +32,23 @@
                     <td><?= $comment->getTaskId() ?></td>
                     <td id="comment-content-<?= $comment->getId() ?>"><?= htmlspecialchars($comment->getContent() ?? '') ?></td>
                     <td><?= $comment->getCreation() ?></td>
-                    <td id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>)">Upraviť</button></td>
-                    <td><button onclick="delete_comment(<?= $comment->getId() ?>)">Zmazať</button></td>
+                    <?php if ($role): ?>
+                        <td id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>)">Upraviť</button></td>
+                        <td><button onclick="delete_comment(<?= $comment->getId() ?>)">Zmazať</button></td>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 <?php endif; ?>
 
-<button id="show_form_for_new_comment">Pridať nový komentár</button>
-<form id="form_new_comment" style="display:none;">
-    <textarea id="new_comment_content" placeholder="Napíš komentár..." maxlength="500" minlength="1" required></textarea>
-    <button type="button" onclick="cancel_adding_comment()">Zrušiť</button>
-    <button type="button" id="add_new_comment" onclick="add_comment(<?= $taskId ?>)">Odoslať</button>
-</form>
+<?php if ($role): ?>
+    <button id="show_form_for_new_comment">Pridať nový komentár</button>
+    <form id="form_new_comment" style="display:none;">
+        <textarea id="new_comment_content" placeholder="Napíš komentár..." maxlength="500" minlength="1" required></textarea>
+        <button type="button" onclick="cancel_adding_comment()">Zrušiť</button>
+        <button type="button" id="add_new_comment" onclick="add_comment(<?= $taskId ?>)">Odoslať</button>
+    </form>
 
-<script src="js/comments.js"></script>
+    <script src="js/comments.js"></script>
+<?php endif; ?>

@@ -56,10 +56,16 @@ class TaskController extends BaseController
         $projectInstance = Project::getOne($projectId);
         if (!$projectInstance) {
             return $this->redirect($this->url('project.index'));
-        } else {
-            $tasks = Task::getAll('`project_id` = ?', [$projectId]);
-            return $this->html(['tasks' => $tasks, 'projectId' => $projectId]);
         }
+        $tasks = Task::getAll('`project_id` = ?', [$projectId]);
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        if (empty($membership_in_project)) {
+            $role = null;
+        } else {
+            $role = ($membership_in_project[0])->getRights();
+        }
+        return $this->html(['tasks' => $tasks, 'projectId' => $projectId, 'role' => $role]);
     }
 
     public function add(Request $request): Response
@@ -97,7 +103,14 @@ class TaskController extends BaseController
             return $this->redirect($this->url('project.index'));
         }
         $members = UserInTask::getAll('`task_id` = ?', [$taskId]);
-        return $this->html(['taskInstance' => $taskInstance, 'projectId' => $projectId, 'members' => $members]);
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        if (empty($membership_in_project)) {
+            $role = null;
+        } else {
+            $role = ($membership_in_project[0])->getRights();
+        }
+        return $this->html(['taskInstance' => $taskInstance, 'projectId' => $projectId, 'members' => $members, 'role' => $role]);
     }
 
     public function delete(Request $request): Response

@@ -5,6 +5,7 @@
 /** @var int $taskId */
 /** @var int $projectId */
 /** @var string[] $errors */
+/** @var string $role */
 
 ?>
 
@@ -30,17 +31,21 @@
                 <td><?= $attachment->getId() ?></td>
                 <td><?= htmlspecialchars($attachment->getFilename()) ?></td>
                 <td><a href="<?= $link->asset($attachment->getPath() . htmlspecialchars($attachment->getFilename())) ?>" download>Stiahnuť</a></td>
-                <td><a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a></td>
+                <?php if ($role): ?>
+                    <td><a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a></td>
+                <?php endif; ?>
             </tr>
         <?php endforeach; ?>
     </table>
 <?php endif; ?>
 
-<button id="show_form_for_new_attachment">Pridať novú prílohu</button>
-<form id="form_new_attachment" method="POST" action="<?= $link->url('attachment.save', ['task' => $taskId, 'project' => $projectId]) ?>" enctype="multipart/form-data" style="display:none;">
-    <input type="file" name="input_new_attachment" id="input_new_attachment" required>
-    <button type="button" onclick="cancel_adding_attachments()">Zrušiť</button>
-    <button type="submit">Uložiť</button>
-</form>
+<?php if ($role): ?>
+    <button id="show_form_for_new_attachment">Pridať novú prílohu</button>
+    <form id="form_new_attachment" method="POST" action="<?= $link->url('attachment.save', ['task' => $taskId, 'project' => $projectId]) ?>" enctype="multipart/form-data" style="display:none;">
+        <input type="file" name="input_new_attachment" id="input_new_attachment" required>
+        <button type="button" onclick="cancel_adding_attachments()">Zrušiť</button>
+        <button type="submit">Uložiť</button>
+    </form>
 
-<script src="js/attachments.js"></script>
+    <script src="js/attachments.js"></script>
+<?php endif; ?>

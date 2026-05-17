@@ -76,7 +76,21 @@ class AttachmentController extends BaseController
         }
         
         $attachments = Attachment::getAll('`task_id` = ?', [$taskId]);
-        return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId, 'errors' => []]);
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        $membership_in_task = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
+        if (empty($membership_in_project)) {
+            $role = null;
+        } else {
+            $role = ($membership_in_project[0])->getRights();
+            if (empty($membership_in_task) && $role !== 'A') {
+                $role = null;
+            }
+            if ($role === 'W') {
+                $role = null;
+            }
+        }
+        return $this->html(['attachments' => $attachments, 'taskId' => $taskId, 'projectId' => $projectId, 'role' => $role, 'errors' => []]);
     }
 
     public function delete(Request $request): Response

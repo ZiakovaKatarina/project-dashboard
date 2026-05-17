@@ -75,7 +75,21 @@ class CommentController extends BaseController
             return $this->redirect($this->url('project.index'));
         }
         $comments = Comment::getAll('`task_id` = ?', [$taskId]);
-        return $this->html(['comments' => $comments, 'taskId' => $taskId, 'projectId' => $projectId]);
+        $userId = $this->app->getAppUser()->getId();
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
+        $membership_in_task = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
+        if (empty($membership_in_project)) {
+            $role = null;
+        } else {
+            $role = ($membership_in_project[0])->getRights();
+            if (empty($membership_in_task) && $role !== 'A') {
+                $role = null;
+            }
+            if ($role === 'R') {
+                $role = null;
+            }
+        }
+        return $this->html(['comments' => $comments, 'taskId' => $taskId, 'projectId' => $projectId, 'role' => $role]);
     }
 
     public function add(Request $request): Response
