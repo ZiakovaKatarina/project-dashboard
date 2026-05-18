@@ -22,18 +22,18 @@
 <?php else: ?>
     <table>
         <tr>
-            <th>ID</th>
             <th>Filename</th>
             <th>Akcie</th>
         </tr>
         <?php foreach ($attachments as $attachment): ?>
             <tr>
-                <td><?= $attachment->getId() ?></td>
                 <td><?= htmlspecialchars($attachment->getFilename()) ?></td>
-                <td><a href="<?= $link->asset($attachment->getPath() . htmlspecialchars($attachment->getFilename())) ?>" download>Stiahnuť</a></td>
-                <?php if ($role): ?>
-                    <td><a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a></td>
-                <?php endif; ?>
+                <td>
+                    <a href="<?= $link->asset($attachment->getPath() . htmlspecialchars($attachment->getFilename())) ?>" download>Stiahnuť</a>
+                    <?php if ($role): ?>
+                        <a href="<?= $link->url('attachment.delete', ['attachment' => $attachment->getId(), 'task' => $taskId, 'project' => $projectId]) ?>">Zmazať</a>
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
     </table>

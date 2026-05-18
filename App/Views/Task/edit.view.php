@@ -1,4 +1,10 @@
-<?php ?>
+<?php
 
-<h1>Chce sa mi upravovať úlohu?</h1>
+/** @var Framework\Support\LinkGenerator $link */
+/** @var int $projectId */
+
+?>
+
+<a href="<?= $link->url('task.index', ['project' => $projectId]) ?>">Späť</a>
+<h1>Úprava úlohy</h1>
 <?php require 'form.view.php' ?>

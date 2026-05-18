@@ -12,6 +12,7 @@
     <?php endforeach; ?>
 <?php endif; ?>
 
+<h1>Update profile</h1>
 <form name="register-form" method="POST" action="<?= $link->url('auth.update') ?>">
     <label>First name</label>
     <input type="text" name="first_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getFirstName() ?? '') ?>" required>

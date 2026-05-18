@@ -10,6 +10,7 @@ use App\Models\Task;
 use App\Models\Comment;
 use App\Models\UserInProject;
 use App\Models\UserInTask;
+use App\Models\User;
 use Framework\Http\HttpException;
 use Override;
 
@@ -75,6 +76,11 @@ class CommentController extends BaseController
             return $this->redirect($this->url('project.index'));
         }
         $comments = Comment::getAll('`task_id` = ?', [$taskId]);
+        $usernames = array();
+        for ($x = 0; $x < count($comments); $x++) {
+            $userId = $comments[$x]->getUserId();
+            $usernames[] = (User::getOne($userId))->getName();
+        }
         $userId = $this->app->getAppUser()->getId();
         $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
         $membership_in_task = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
@@ -89,7 +95,7 @@ class CommentController extends BaseController
                 $role = null;
             }
         }
-        return $this->html(['comments' => $comments, 'taskId' => $taskId, 'projectId' => $projectId, 'role' => $role]);
+        return $this->html(['comments' => $comments, 'taskId' => $taskId, 'projectId' => $projectId, 'usernames' => $usernames, 'role' => $role]);
     }
 
     public function add(Request $request): Response
@@ -128,9 +134,10 @@ class CommentController extends BaseController
         $comment->setCreation(date('Y-m-d H:i:s'));
         $comment->save();
 
+        $username = User::getOne($comment->getUserId())->getName();
         return $this->json([
             'comment_id' => $comment->getId(),
-            'user_id' => $comment->getUserId(),
+            'username' => $username,
             'task_id' => $comment->getTaskId(),
             'content' => $comment->getContent(),
             'creation' => $comment->getCreation()

@@ -36,10 +36,10 @@
     <label>Odovzdanie úlohy</label>
     <input name="submission" type="date" value="<?= @$taskInstance?->getSubmission() ?>">
     <button>Uložiť</button>
-    <a href="<?= $link->url('task.index', ['project' => $projectId]) ?>">Späť</a>
 </form>
 
 <?php if (@$taskInstance?->getId() > 0): ?>
+    <hr>
     <h2>Osoby pracujúce na tejto úlohe</h2>
     <?php if (count($members) === 0): ?>
         <p>Tejto úlohe ešte neboli priradení žiadni používatelia.</p>
@@ -68,18 +68,21 @@
                             </form>
                         <?php endif; ?>
                     </td>
-                    <?php if ($role === 'A'): ?>
-                        <td><button onclick="edit_user_in_task(<?= $member->getUser()->getId() ?>)">Upraviť</button></td>
-                        <td><a href="<?= $link->url('task.remove_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">Odstrániť</a></td>
-                    <?php endif; ?>
+                    <td>
+                        <?php if ($role === 'A'): ?>
+                            <button onclick="edit_user_in_task(<?= $member->getUser()->getId() ?>)">Upraviť</button>
+                            <a href="<?= $link->url('task.remove_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">Odstrániť</a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
 
     <?php if ($role === 'A'): ?>
-        <label>Hľadať nového člena tímu podľa emailu</label>
+        <p>Hľadať nového pracovníka na úlohe podľa emailu... Tento pracovník musí byť súčasťou projektu.</p>
         <form action="<?= $link->url('task.add_member', ['project' => $projectId, 'task' => $taskInstance->getId()]) ?>" method="POST">
+            <label>Osoba v projekte:</label>
             <input type="email" name="email" required maxlength="250">
             <button type="submit">Pridať</button>
         </form>

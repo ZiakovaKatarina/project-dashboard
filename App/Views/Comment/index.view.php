@@ -2,6 +2,7 @@
 
 /** @var Framework\Support\LinkGenerator $link */
 /** @var App\Models\Comment[] $comments */
+/** @var string[] $usernames */
 /** @var int $projectId */
 /** @var int $taskId */
 /** @var string $role */
@@ -15,9 +16,7 @@
 <?php else: ?>
     <table>
         <tr>
-            <th>ID</th>
-            <th>ID používateľa</th>
-            <th>ID úlohy</th>
+            <th>Používateľ</th>
             <th>Obsah</th>
             <th>Dátum a čas vytvorenia</th>
             <?php if ($role): ?>
@@ -25,30 +24,31 @@
             <?php endif; ?>
         </tr>
         <tbody id='comments-list'>
-            <?php foreach ($comments as $comment): ?>
+            <?php for ($x = 0; $x < count($comments); $x++): ?>
+                <?php $comment = $comments[$x]; ?>
+                <?php $username = $usernames[$x]; ?>
                 <tr id="comment-row-<?= $comment->getId() ?>">
-                    <td><?= $comment->getId() ?></td>
-                    <td><?= $comment->getUserId() ?></td>
-                    <td><?= $comment->getTaskId() ?></td>
+                    <td><?= htmlspecialchars($username) ?></td>
                     <td id="comment-content-<?= $comment->getId() ?>"><?= htmlspecialchars($comment->getContent() ?? '') ?></td>
                     <td><?= $comment->getCreation() ?></td>
-                    <?php if ($role): ?>
-                        <td id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>)">Upraviť</button></td>
-                        <td><button onclick="delete_comment(<?= $comment->getId() ?>)">Zmazať</button></td>
-                    <?php endif; ?>
+                    <td>
+                        <?php if ($role): ?>
+                            <span id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>, <?= $taskId ?>, <?= $projectId ?>)">Upraviť</button></span>
+                            <button onclick="delete_comment(<?= $comment->getId() ?>, <?= $taskId ?>, <?= $projectId ?>)">Zmazať</button>
+                        <?php endif; ?>
+                    </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endfor; ?>
         </tbody>
     </table>
 <?php endif; ?>
 
 <?php if ($role): ?>
     <button id="show_form_for_new_comment">Pridať nový komentár</button>
-    <form id="form_new_comment" style="display:none;">
+    <form id="form_new_comment" class="one-row-comment" style="display:none;">
         <textarea id="new_comment_content" placeholder="Napíš komentár..." maxlength="500" minlength="1" required></textarea>
         <button type="button" onclick="cancel_adding_comment()">Zrušiť</button>
-        <button type="button" id="add_new_comment" onclick="add_comment(<?= $taskId ?>)">Odoslať</button>
+        <button type="button" id="add_new_comment" onclick="add_comment(<?= $taskId ?>, <?= $projectId ?>)">Odoslať</button>
     </form>
-
-    <script src="js/comments.js"></script>
 <?php endif; ?>
+<script src="js/comments.js"></script>

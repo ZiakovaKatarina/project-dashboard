@@ -31,10 +31,10 @@
     <label>Odovzdanie projektu</label>
     <input name="submission" type="date" value="<?= @$projectInstance?->getSubmission() ?>">
     <button type="submit">Uložiť</button>
-    <a href="?c=project&a=index">Späť</a>
 </form>
 
 <?php if (@$projectInstance?->getId() > 0): ?>
+    <hr>
     <h2>Členovia tímu</h2>
     <?php if (count($members) === 0): ?>
         <p>Tomuto projektu ešte neboli priradení žiadni používatelia.</p>
@@ -63,21 +63,23 @@
                             <button type="submit">Uložiť</button>
                         </form>
                     </td>
-                    <td><button onclick="edit_user_in_project(<?= $member->getUser()->getId() ?>)">Upraviť</button></td>
-                    <td><a href="<?= $link->url('project.remove_user', ['project' => $projectInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">Odstrániť</a></td>
+                    <td>
+                        <button onclick="edit_user_in_project(<?= $member->getUser()->getId() ?>)">Upraviť</button>
+                        <a href="<?= $link->url('project.remove_user', ['project' => $projectInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">Odstrániť</a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
 
-    <label>Hľadať nového člena projektu podľa emailu</label>
+    <p>Hľadať nového člena projektu podľa emailu...</p>
     <form action="<?= $link->url('project.add_member', ['project' => $projectInstance->getId()]) ?>" method="POST">
-        <input type="email" name="email" required maxlength="250">
         <select name="rights">
             <option value="W">Writer</option>
             <option value="R">Reader</option>
             <option value="A">Admin</option>
         </select>
+        <input type="email" name="email" required maxlength="250">
         <button type="submit">Pridať</button>
     </form>
 <?php endif; ?>

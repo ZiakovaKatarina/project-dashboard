@@ -1,0 +1,119 @@
+body {
+    margin: auto;
+}
+
+h1 {
+    color: #950606;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+h2 {
+    color: #af2828;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: -0.09rem;
+}
+
+a {
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: #850c0c;
+    color: #850c0c;
+    text-decoration: none;
+    padding: 5px 6px;
+    border-radius: 5px;
+}
+
+button {
+    background-color: inherit;
+    color: #850c0c;
+    padding: 5px 6px;
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: #850c0c;
+    border-radius: 5px;
+}
+
+table {
+    margin: 20px auto;
+}
+
+th, td {
+    padding: 15px 10px;
+}
+
+th {
+    background-color: #850c0c;
+    color: white;
+}
+
+td {
+    height: 30px;
+}
+
+tr:hover {
+    background-color: #ffbfbf;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 170px 450px;
+    border: 1px;
+    margin: 20px auto;
+    gap: 15px 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+form button {
+    grid-column: span 2;
+    justify-self: center;
+}
+
+form input, form select, form textarea {
+    padding: 4px 7px;
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+form input:focus, form select:focus, form textarea:focus {
+    border-color: #850c0c;
+}
+
+textarea {
+    background-color: inherit;
+}
+
+label {
+    text-align: right;
+}
+
+input[type="hidden"] {
+    display: none;
+}
+
+hr {
+    border-width: 3px;
+    border-color: #850c0c;
+}
+
+.no_break {
+    white-space: nowrap;
+}
+
+.web-content {
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+}
+
+.one-row-comment {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.one-row-comment textarea {
+    resize: none;
+}

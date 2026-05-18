@@ -53,7 +53,8 @@ class User extends Model implements IIdentity
     #[Override]
     public function getName(): string
     {
-        return $this->first_name . " " . $this->last_name . " (" . $this->email . ") ";
+        // return $this->first_name . " " . $this->last_name . " (" . $this->email . ") ";
+        return $this->first_name . " " . $this->last_name;
     }
 
     public function getEmail(): ?string

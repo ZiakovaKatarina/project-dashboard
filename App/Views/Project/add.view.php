@@ -1,4 +1,5 @@
 <?php ?>
 
-<h1>Nechce sa mi pridávať projekt</h1>
+<a href="?c=project&a=index">Späť</a>
+<h1>Nový projekt</h1>
 <?php require 'form.view.php' ?>

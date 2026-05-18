@@ -12,11 +12,10 @@
 <?php else: ?>
     <table>
         <tr>
-            <th>ID</th>
             <th>Názov</th>
             <th>Popis</th>
             <th>Status</th>
-            <th>Termín odovzdania</th>
+            <th>Termín</th>
             <th>Odovzdanie</th>
             <th>Akcie</th>
         </tr>
@@ -24,14 +23,13 @@
             <?php $project = $projects[$x]; ?>
             <?php $role = $roles[$x]; ?>
             <tr>
-                <td><?= $project->getId() ?></td>
                 <td><?= htmlspecialchars($project->getName() ?? '') ?></td>
                 <td><?= htmlspecialchars($project->getDescription() ?? '') ?></td>
                 <td>
                     <?php if ($project->getStatus() === 'C'): ?>
                         vytvorený
                     <?php elseif ($project->getStatus() === 'P'): ?>
-                        pracuje sa na ňom
+                        rozpracovaný
                     <?php elseif ($project->getStatus() === 'D'): ?>
                         dokončený
                     <?php elseif ($project->getStatus() === 'R'): ?>
@@ -40,11 +38,13 @@
                 </td>
                 <td><?= $project->getDeadline() ?></td>
                 <td><?= $project->getSubmission() ?></td>
-                <?php if ($role == 'A'): ?>
-                    <td><a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a></td>
-                    <td><a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a></td>
-                <?php endif; ?>
-                <td><a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Úlohy</a></td>
+                <td>
+                    <?php if ($role == 'A'): ?>
+                        <a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a>
+                        <a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a>
+                    <?php endif; ?>
+                    <a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Úlohy</a>
+                </td>
             </tr>
         <?php endfor; ?>
     </table>
