@@ -37,7 +37,7 @@ async function add_comment(task_id, project_id) {
         new_content += `<td>${data.username || ''}</td>`;
         new_content += `<td id="comment-content-${data.comment_id}"></td>`;
         new_content += `<td>${data.creation}</td>`;
-        new_content += `<td><button onclick="edit_comment(${data.comment_id}, ${task_id}, ${project_id})">Upraviť</button>
+        new_content += `<td><span id="edit_buttons-${data.comment_id}"><button id="edit_button-${data.comment_id}" onclick="edit_comment(${data.comment_id}, ${task_id}, ${project_id})">Upraviť</button></span>
                         <button onclick="delete_comment(${data.comment_id}, ${task_id}, ${project_id})">Zmazať</button></td>`;
         new_content += `</tr>`;
         document.getElementById('comments-list').innerHTML += new_content;
@@ -48,6 +48,10 @@ async function add_comment(task_id, project_id) {
 
 function edit_comment(commentId, taskId, projectId) {
     const cell = document.getElementById('comment-content-' + commentId);
+
+    const edit_button = document.getElementById('edit_button-' + commentId);
+    if (edit_button) edit_button.disabled = true;
+
     const old_value = cell.textContent;
     const save_value = encodeURIComponent(old_value);
     cell.innerHTML = `
@@ -63,6 +67,9 @@ function edit_comment(commentId, taskId, projectId) {
 function cancel_editing_comment(commentId, save_value) {
     const cell = document.getElementById('comment-content-' + commentId);
     cell.textContent = decodeURIComponent(save_value);
+
+    const edit_button = document.getElementById('edit_button-' + commentId);
+    if (edit_button) edit_button.disabled = false;
 }
 
 async function save_edits(commentId, taskId, projectId) {
@@ -99,6 +106,8 @@ async function save_edits(commentId, taskId, projectId) {
         alert(data.error);
     } else if (data) {
         document.getElementById("comment-content-" + commentId).textContent = data.content;
+        const edit_button = document.getElementById('edit_button-' + commentId);
+        if (edit_button) edit_button.disabled = false;
     }
 }
 

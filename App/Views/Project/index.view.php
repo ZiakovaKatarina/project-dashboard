@@ -36,8 +36,8 @@
                         odstránený
                     <?php endif ?>
                 </td>
-                <td><?= $project->getDeadline() ?></td>
-                <td><?= $project->getSubmission() ?></td>
+                <td class="no_break"><?= $project->getDeadline() ?></td>
+                <td class="no_break"><?= $project->getSubmission() ?></td>
                 <td>
                     <?php if ($role == 'A'): ?>
                         <a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a>

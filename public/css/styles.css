@@ -98,6 +98,11 @@ hr {
     border-color: #850c0c;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .no_break {
     white-space: nowrap;
 }
@@ -106,6 +111,7 @@ hr {
     max-width: 1200px;
     width: 100%;
     margin: auto;
+    margin-bottom: 5px;
 }
 
 .one-row-comment {
@@ -115,5 +121,106 @@ hr {
 }
 
 .one-row-comment textarea {
-    resize: none;
+    min-width: 100px;
+    width: 100%;
+    height: 80px;
+    resize: vertical;
+}
+
+td:last-child {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        margin: 5px;
+    }
+
+    table {
+        display: block;
+        margin: 5px;
+        overflow-x: auto;
+        margin-bottom: 10px;
+    }
+
+    td a, td button {
+        display: block;
+        width: 100%;
+        min-width: 100%;
+        text-align: center;
+        padding: 8px 5px;
+        margin: 3px 0;
+    }
+
+    th, td {
+        padding: 2px 5px;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        gap: 5px;
+    }
+
+    label {
+        text-align: left;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 5px;
+    }
+
+    form input, form select, form textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .one-row-comment {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .one-row-comment button {
+        display: inline-block;
+        width: auto;
+        min-width: 50px;
+        padding: 5px;
+    }
+
+    .one-row-comment textarea {
+        width: 50%;
+    }
+}
+
+@media (max-width: 500px) {
+    .navbar {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+
+    .navbar-text {
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    .navbar-nav {
+        display: flex !important;
+        flex-direction: row !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        justify-content: center !important;
+        gap: 30px;
+    }
+
+    .navbar .container-fluid {
+        gap: 0 !important;
+    }
+
+    .navbar-brand img {
+        width: 35px;
+    }
 }

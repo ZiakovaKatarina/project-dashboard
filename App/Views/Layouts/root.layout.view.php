@@ -8,6 +8,7 @@
 <html lang="sk">
 <head>
     <title><?= App\Configuration::APP_NAME ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="<?= $link->asset('favicons/apple-touch-icon.png') ?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= $link->asset('favicons/favicon-32x32.png') ?>">
@@ -41,7 +42,7 @@
                     <a class="nav-link" href="<?= $link->url('project.index') ?>">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $link->url('auth.profile') ?>">Pofile</a>
+                    <a class="nav-link" href="<?= $link->url('auth.profile') ?>">Profil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= $link->url('auth.logout') ?>">Log out</a>

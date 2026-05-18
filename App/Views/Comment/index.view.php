@@ -33,7 +33,9 @@
                     <td><?= $comment->getCreation() ?></td>
                     <td>
                         <?php if ($role): ?>
-                            <span id="edit_buttons-<?= $comment->getId() ?>"><button onclick="edit_comment(<?= $comment->getId() ?>, <?= $taskId ?>, <?= $projectId ?>)">Upraviť</button></span>
+                            <span id="edit_buttons-<?= $comment->getId() ?>">
+                                <button id="edit_button-<?= $comment->getId() ?>" onclick="edit_comment(<?= $comment->getId() ?>, <?= $taskId ?>, <?= $projectId ?>)">Upraviť</button>
+                            </span>
                             <button onclick="delete_comment(<?= $comment->getId() ?>, <?= $taskId ?>, <?= $projectId ?>)">Zmazať</button>
                         <?php endif; ?>
                     </td>
