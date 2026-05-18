@@ -8,6 +8,8 @@ use Framework\Http\Responses\Response;
 use App\Models\Project;
 use App\Models\UserInProject;
 use App\Models\User;
+use App\Models\Task;
+use App\Models\UserInTask;
 use Override;
 
 class ProjectController extends BaseController
@@ -35,6 +37,10 @@ class ProjectController extends BaseController
             return false;
         }
 
+        if ($action == 'team') {
+            return true;
+        }
+        
         $membership = $membership[0];
         $role = $membership->getRights();
         if ($role == 'A') {
@@ -54,7 +60,33 @@ class ProjectController extends BaseController
             $projects[] = Project::getOne($userINprojects[$x]->getProjectId());
             $roles[] = $userINprojects[$x]->getRights();
         }
-        return $this->html(['projects' => $projects, 'roles' => $roles]);
+
+        $progress = array();
+        foreach ($projects as $project) {
+            $id = $project->getId();
+            $tasks = Task::getAll('`project_id` = ?', [$id]);
+            $sum = 0;
+            $taskCount = count($tasks);
+            foreach ($tasks as $task) {
+                $userInTasks = UserInTask::getAll('`task_id` = ?', [$task->getId()]);
+                $partialSum = 0;
+                $userInTasksCount = count($userInTasks);
+                foreach ($userInTasks as $userInTask) {
+                    $state = $userInTask->getState();
+                    $partialSum = $partialSum + $state;
+                }
+                if ($userInTasksCount > 0) {
+                    $sum = $sum + $partialSum / $userInTasksCount;
+                }
+            }
+
+            if ($taskCount > 0) {
+                $progress[] = round($sum / $taskCount);
+            } else {
+                $progress[] = 0;
+            }
+        }
+        return $this->html(['projects' => $projects, 'roles' => $roles, 'progressArray' => $progress]);
     }
 
     public function add(Request $request): Response
@@ -160,6 +192,20 @@ class ProjectController extends BaseController
         }
 
         return $this->redirect($this->url('project.index'));
+    }
+
+    public function team(Request $request): Response
+    {
+        $projectId = $request->value('project');
+        if (!$projectId || $projectId <= 0) {
+            return $this->redirect($this->url('project.index'));
+        }
+        $projectInstance = Project::getOne($projectId);
+        if (!$projectInstance) {
+            return $this->redirect($this->url('project.index'));
+        }
+        $memberships = UserInProject::getAll('`project_id` = ?', [$projectId]);
+        return $this->html(['project' => $projectId, 'membership' =>$memberships]);
     }
 
     public function add_member(Request $request): Response

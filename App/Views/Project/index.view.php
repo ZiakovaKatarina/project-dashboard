@@ -3,6 +3,7 @@
 /** @var Framework\Support\LinkGenerator $link */
 /** @var App\Models\Project[] $projects */
 /** @var string[] $roles */
+/** @var int[] $progressArray */
 
 ?>
 
@@ -17,11 +18,13 @@
             <th>Status</th>
             <th>Termín</th>
             <th>Odovzdanie</th>
+            <th>Progres</th>
             <th>Akcie</th>
         </tr>
         <?php for ($x = 0; $x < count($projects); $x++): ?>
             <?php $project = $projects[$x]; ?>
             <?php $role = $roles[$x]; ?>
+            <?php $progress = $progressArray[$x]; ?>
             <tr>
                 <td><?= htmlspecialchars($project->getName() ?? '') ?></td>
                 <td><?= htmlspecialchars($project->getDescription() ?? '') ?></td>
@@ -38,12 +41,14 @@
                 </td>
                 <td class="no_break"><?= $project->getDeadline() ?></td>
                 <td class="no_break"><?= $project->getSubmission() ?></td>
+                <td class="no_break"><?= $progress ?> %</td>
                 <td>
                     <?php if ($role == 'A'): ?>
                         <a href="<?= $link->url('project.edit', ['project' => $project->getId()]) ?>">Upraviť</a>
                         <a href="<?= $link->url('project.delete', ['project' => $project->getId()]) ?>">Zmazať</a>
                     <?php endif; ?>
                     <a href="<?= $link->url('task.index', ['project' => $project->getId()]) ?>">Úlohy</a>
+                    <a href="<?= $link->url('project.team', ['project' => $project->getId()]) ?>">Členovia</a>
                 </td>
             </tr>
         <?php endfor; ?>

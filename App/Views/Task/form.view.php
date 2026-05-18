@@ -62,7 +62,8 @@
                         <?php if ($role === 'A'): ?>
                             <form id="form_change_user_state_<?= $member->getUser()->getId() ?>" method="POST" style="display:none;"
                                 action="<?= $link->url('task.edit_user', ['project' => $projectId, 'task' => $taskInstance->getId(), 'userId' => $member->getUser()->getId()]) ?>">
-                                <input type="number" name="state" step="0.01" min="0" max="100" required>
+                                <input type="hidden" name="return_to" value="edit">
+                                <input type="number" name="state" step="0.01" min="0" max="100" required value="<?= $member->getState() ?>">
                                 <button type="button" onclick="cancel_editing_user_in_task(<?= $member->getUser()->getId() ?>">Zrušiť</button>
                                 <button type="submit">Uložiť</button>
                             </form>

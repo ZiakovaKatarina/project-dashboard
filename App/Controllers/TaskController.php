@@ -39,7 +39,7 @@ class TaskController extends BaseController
         }
 
         if ($role == 'W') {
-            if ($action == 'edit' || $action == 'save' || $action == 'add') {
+            if ($action == 'edit' || $action == 'save' || $action == 'add' || $action == 'team') {
                 return true;
             }
         }
@@ -65,7 +65,29 @@ class TaskController extends BaseController
         } else {
             $role = ($membership_in_project[0])->getRights();
         }
-        return $this->html(['tasks' => $tasks, 'projectId' => $projectId, 'role' => $role]);
+
+        $state = array();
+        $myStates = array();
+        foreach ($tasks as $task) {
+            $userInTasks = UserInTask::getAll('`task_id` = ?', [$task->getId()]);
+            $partialSum = 0;
+            $userInTasksCount = count($userInTasks);
+            $my_state = null;
+            foreach ($userInTasks as $userInTask) {
+                $s = $userInTask->getState();
+                $partialSum = $partialSum + $s;
+                if ($userInTask->getUserId() == $userId) {
+                    $my_state = $s;
+                }
+            }
+            if ($userInTasksCount > 0) {
+                $state[] = round($partialSum / $userInTasksCount);
+            } else {
+                $state[] = 0;
+            }
+            $myStates[] = $my_state;
+        }
+        return $this->html(['tasks' => $tasks, 'projectId' => $projectId, 'role' => $role, 'states' => $state, 'myStates' => $myStates]);
     }
 
     public function add(Request $request): Response
@@ -231,6 +253,64 @@ class TaskController extends BaseController
         return $this->redirect($this->url('task.index', ['project' => $projectId]));
     }
 
+    public function team(Request $request): Response
+    {
+        $projectId = $request->value('project');
+        if (!$projectId || $projectId <= 0) {
+            return $this->redirect($this->url('project.index'));
+        }
+        $projectInstance = Project::getOne($projectId);
+        if (!$projectInstance) {
+            return $this->redirect($this->url('project.index'));
+        }
+        $taskId = $request->value('task');
+        if (!$taskId || $taskId <= 0) {
+            return $this->redirect($this->url('task.index'));
+        }
+        $taskInstance = Task::getOne($taskId);
+        if (!$taskInstance) {
+            return $this->redirect($this->url('task.index'));
+        }
+        $memberships = UserInTask::getAll('`task_id` = ?', [$taskId]);
+        $user = $this->app->getAppUser()->getId();
+        return $this->html(['project' => $projectId, 'membership' => $memberships, 'user' => $user]);
+    }
+
+    public function update_state(Request $request): Response
+    {
+        $projectId = $request->value('project');
+        if (!$projectId || $projectId <= 0) {
+            return $this->redirect($this->url('project.index'));
+        }
+        $projectInstance = Project::getOne($projectId);
+        if (!$projectInstance) {
+            return $this->redirect($this->url('project.index'));
+        }
+
+        $taskId = $request->value('task');
+        if (!$taskId || $taskId <= 0) {
+            return $this->redirect($this->url('task.index'));
+        }
+        $taskInstance = Task::getOne($taskId);
+        if (!$taskInstance) {
+            return $this->redirect($this->url('task.index'));
+        }
+
+        $new_state = $request->value('state');
+        $userId = $this->app->getAppUser()->getId();
+
+        $userInTask = UserInTask::getAll('`task_id` = ? and `user_id` = ?', [$taskId, $userId]);
+        if (!empty($userInTask)) {
+            $record = $userInTask[0];
+            if ($new_state >= 0 && $new_state <= 100) {
+                $record->setState($new_state);
+                $record->save();
+            }
+        }
+
+        return $this->redirect($this->url('task.index', ['project' => $projectId]));
+    }
+
     public function add_member(Request $request): Response
     {
         $projectId = $request->value('project');
@@ -332,43 +412,38 @@ class TaskController extends BaseController
         }
 
         $errors = array();
+        $state = $request->value('state');
+        if (!$state) {
+            $state = 0;
+        }
+        if ($state < 0 || $state > 100) {
+            $errors[] = 'Stav úlohy musí byť číslo od 0 do 100 vrátane.';
+        }
 
-        $users_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
-        if (empty($users_in_project)) {
-            return $this->redirect($this->url('task.edit', ['project' => $projectId, 'task' => $taskId]));
+        $currentUserId = $this->app->getAppUser()->getId();
+        $targetUserId = $request->value('userId');
+        $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $currentUserId]);
+        if (empty($membership_in_project)) {
+            $role = null;
         } else {
-            $user_in_project = $users_in_project[0];
-            $searched_users_in_task = UserInTask::getAll('`user_id` = ? and `task_id` = ?', [$userId, $taskId]);
-            if (empty($searched_users_in_task)) {
-                return $this->redirect($this->url('task.edit', ['project' => $projectId, 'task' => $taskId]));
-            }
+            $role = ($membership_in_project[0])->getRights();
+        }
+        if ($role !== 'A' && $currentUserId !== $targetUserId) {
+            return $this->redirect($this->url('task.index', ['project' => $projectId]));
+        }
+
+        $searched_users_in_task = UserInTask::getAll('`user_id` = ? and `task_id` = ?', [$targetUserId, $taskId]);
+        if (!empty($searched_users_in_task)) {
             $searched_user_in_task = $searched_users_in_task[0];
-
-            $state = $request->value('state');
-            if (!$state) {
-                $state = 0;
-            }
-            if ($state < 0 || $state > 100) {
-                $errors[] = 'Stav úlohy musí byť číslo od 0 do 100 vrátane.';
-            }
-            
-            if (count($errors) > 0) {
-                $members = UserInTask::getAll('`task_id` = ?', [$taskId]);
-                $userId = $this->app->getAppUser()->getId();
-                $membership_in_project = UserInProject::getAll('`project_id` = ? and `user_id` = ?', [$projectId, $userId]);
-                if (empty($membership_in_project)) {
-                    $role = null;
-                } else {
-                    $role = ($membership_in_project[0])->getRights();
-                }
-                return $this->html(['errors' => $errors, 'role' => $role, 'taskInstance' => $taskInstance, 'members' => $members, 'projectId' => $projectId], 'edit');
-            }
-
             $searched_user_in_task->setState($state);
             $searched_user_in_task->save();
         }
-        
-        return $this->redirect($this->url('task.edit', ['project' => $projectId, 'task' => $taskId]));
+        $returnTo = $request->value('return_to');
+        if ($returnTo === 'team') {
+            return $this->redirect($this->url('task.team', ['project' => $projectId, 'task' => $taskId]));
+        } else {
+            return $this->redirect($this->url('task.edit', ['project' => $projectId, 'task' => $taskId]));
+        }
     }
 
     public function remove_user(Request $request): Response

@@ -4,6 +4,9 @@
 /** @var App\Models\Task[] $tasks */
 /** @var int $projectId */
 /** @var string $role */
+/** @var int[] $states */
+/** @var int[] $myStates */
+/** @var App\Models\User $user */
 
 ?>
 
@@ -20,9 +23,12 @@
             <th>Termín</th>
             <th>Odovzdanie</th>
             <th>Priorita</th>
+            <th>Stav</th>
             <th>Akcie</th>
         </tr>
-        <?php foreach ($tasks as $task): ?>
+        <?php for ($x = 0; $x < count($tasks); $x++): ?>
+            <?php $task = $tasks[$x]; ?>
+            <?php $state = $states[$x]; ?>
             <tr>
                 <td><?= htmlspecialchars($task->getName() ?? '') ?></td>
                 <td><?= htmlspecialchars($task->getDescription() ?? '') ?></td>
@@ -40,6 +46,7 @@
                 <td class="no_break"><?= $task->getDeadline() ?></td>
                 <td class="no_break"><?= $task->getSubmission() ?></td>
                 <td class="no_break"><?= $task->getPriority() ?></td>
+                <td class="no_break"><?= $state ?> %</td>
                 <td>
                     <?php if ($role === 'A' || $role === 'W'): ?>
                         <a href="<?= $link->url('task.edit', ['task' => $task->getId(), 'project' => $projectId]) ?>">Upraviť</a>
@@ -49,9 +56,10 @@
                     <?php endif; ?>
                     <a href="<?= $link->url('comment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Komentáre</a>
                     <a href="<?= $link->url('attachment.index', ['task' => $task->getId(), 'project' => $projectId]) ?>">Prílohy</a>
+                    <a href="<?= $link->url('task.team', ['project' => $projectId, 'task' => $task->getId()]) ?>">Členovia</a>
                 </td>
             </tr>
-        <?php endforeach; ?>
+        <?php endfor; ?>
     </table>
 <?php endif; ?>
 <?php if ($role === 'A' || $role === 'W'): ?>
