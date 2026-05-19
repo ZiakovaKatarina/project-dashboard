@@ -12,16 +12,18 @@
     <?php endforeach; ?>
 <?php endif; ?>
 
-<form name="register-form" method="POST" action="<?= $link->url('auth.register') ?>">
+<form name="register-form" method="POST" action="<?= $link->url('auth.register') ?>" onsubmit="validate_registration(event)">
     <label>First name</label>
-    <input type="text" name="first_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getFirstName() ?? '') ?>" required>
+    <input id="first_name" type="text" name="first_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getFirstName() ?? '') ?>" required>
     <label>Last name</label>
-    <input type="text" name="last_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getLastName() ?? '') ?>" required>
+    <input id="last_name" type="text" name="last_name" maxlength="100" minlength="3" value="<?= htmlspecialchars(@$register_user?->getLastName() ?? '') ?>" required>
     <label>Email</label>
-    <input type="email" name="email" maxlength="250" value="<?= htmlspecialchars(@$register_user?->getEmail() ?? '') ?>" required>
+    <input id="email" type="email" name="email" maxlength="250" value="<?= htmlspecialchars(@$register_user?->getEmail() ?? '') ?>" required>
     <label>Password</label>
-    <input type="password" name="password" maxlength="250" minlength="5" required>
+    <input id="password1" type="password" name="password" maxlength="250" minlength="5" required>
     <label>Repeat password</label>
-    <input type="password" name="repeated_password" maxlength="250" minlength="5" required>
+    <input id="password2" type="password" name="repeated_password" maxlength="250" minlength="5" required>
     <button type="submit">Register</button>
 </form>
+
+<script src="js/auth.js"></script>
